@@ -525,7 +525,7 @@ namespace PacTheMan.Models {
     [System.Diagnostics.CodeAnalysis.NotNull, System.Diagnostics.CodeAnalysis.DisallowNull]
     public MovingStates Direction { get; set; }
     [System.Diagnostics.CodeAnalysis.NotNull, System.Diagnostics.CodeAnalysis.DisallowNull]
-    public System.Collections.Generic.Dictionary<System.Guid, long> Score { get; set; }
+    public System.Collections.Generic.Dictionary<System.Guid, long> Scores { get; set; }
     [System.Diagnostics.CodeAnalysis.NotNull, System.Diagnostics.CodeAnalysis.DisallowNull]
     public System.Collections.Generic.Dictionary<System.Guid, long> Lives { get; set; }
     [System.Diagnostics.CodeAnalysis.NotNull, System.Diagnostics.CodeAnalysis.DisallowNull]
@@ -538,7 +538,7 @@ namespace PacTheMan.Models {
       if (ReferenceEquals(this, other)) {
         return true;
       }
-      return Direction == other.Direction && (Score is null ? other.Score is null : other.Score is not null && Score.SequenceEqual(other.Score)) && (Lives is null ? other.Lives is null : other.Lives is not null && Lives.SequenceEqual(other.Lives)) && (PlayerPositions is null ? other.PlayerPositions is null : other.PlayerPositions is not null && PlayerPositions.SequenceEqual(other.PlayerPositions));
+      return Direction == other.Direction && (Scores is null ? other.Scores is null : other.Scores is not null && Scores.SequenceEqual(other.Scores)) && (Lives is null ? other.Lives is null : other.Lives is not null && Lives.SequenceEqual(other.Lives)) && (PlayerPositions is null ? other.PlayerPositions is null : other.PlayerPositions is not null && PlayerPositions.SequenceEqual(other.PlayerPositions));
     }
 
     public override bool Equals(object obj) {
@@ -557,7 +557,7 @@ namespace PacTheMan.Models {
     public override int GetHashCode() {
       int hash = 1;
       hash ^= Direction.GetHashCode();
-      hash ^= Score.GetHashCode();
+      hash ^= Scores.GetHashCode();
       hash ^= Lives.GetHashCode();
       hash ^= PlayerPositions.GetHashCode();
       return hash;
@@ -603,8 +603,8 @@ namespace PacTheMan.Models {
     [System.Runtime.CompilerServices.MethodImpl(BebopConstants.HotPath)]
     internal static void EncodeInto(BasePlayerState record, ref BebopWriter writer) {
       writer.WriteEnum<MovingStates>(record.Direction);
-      writer.WriteUInt32(unchecked((uint)record.Score.Count));
-      foreach (var kv0 in record.Score) {
+      writer.WriteUInt32(unchecked((uint)record.Scores.Count));
+      foreach (var kv0 in record.Scores) {
         writer.WriteGuid(kv0.Key);
         writer.WriteInt64(kv0.Value);
       }
@@ -724,7 +724,7 @@ namespace PacTheMan.Models {
       }
       return new PlayerState {
         Direction = field0,
-        Score = field1,
+        Scores = field1,
         Lives = field2,
         PlayerPositions = field3,
       };
@@ -772,7 +772,7 @@ namespace PacTheMan.Models {
       }
       return new T {
         Direction = field0,
-        Score = field1,
+        Scores = field1,
         Lives = field2,
         PlayerPositions = field3,
       };

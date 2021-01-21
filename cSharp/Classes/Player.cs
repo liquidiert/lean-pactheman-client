@@ -12,14 +12,14 @@ namespace lean_pactheman_client {
     public class Player {
 
         private TcpClient _client;
-        public Guid Id;
-        public PlayerState InternalPlayerState;
+        public SessionMsg Session;
         private MoveAdapter _moveAdapter;
 
+        public Position StartPosition { get; set; }
         public Position Position {
-            get => (Position) InternalPlayerState.PlayerPositions[Id] ?? new Position();
+            get => (Position) GameState.Instance.PlayerState.PlayerPositions[Session.ClientId ?? Guid.NewGuid()] ?? new Position();
             set {
-                InternalPlayerState.PlayerPositions[Id] = value;
+                GameState.Instance.PlayerState.PlayerPositions[Session.ClientId ?? Guid.NewGuid()] = value;
             }
         }
 
@@ -29,7 +29,6 @@ namespace lean_pactheman_client {
         public string Name { get; set; }
 
         public Player(string name) {
-            this.InternalPlayerState = new PlayerState();
             Name = name;
             _moveAdapter = new MoveAdapter();
         }
@@ -62,7 +61,7 @@ namespace lean_pactheman_client {
         public async Task Exit() {
             Console.WriteLine("called exit");
             var exitMsg = new ExitMsg {
-                Session = new SessionMsg()
+                Session = Session
             };
             var netMsg = new NetworkMessage {
                 IncomingOpCode = ExitMsg.OpCode,
@@ -119,7 +118,7 @@ namespace lean_pactheman_client {
             // send join
             var joinMsg = new JoinMsg {
                 PlayerName = Name,
-                Session = new SessionMsg()
+                Session = Session
             };
             var netMsg = new NetworkMessage {
                 IncomingOpCode = JoinMsg.OpCode,
@@ -131,7 +130,7 @@ namespace lean_pactheman_client {
 
         public async Task SetReady() {
             var rdyMsg = new ReadyMsg {
-                Session = new SessionMsg(),
+                Session = Session,
                 Ready = true
             };
             var netMsg = new NetworkMessage {
@@ -156,7 +155,8 @@ namespace lean_pactheman_client {
 
             var msg = new NetworkMessage {
                 IncomingOpCode = PlayerState.OpCode,
-                IncomingRecord = InternalPlayerState.EncodeAsImmutable()
+                IncomingRecord = GameState.Instance.PlayerState
+                    .ToSynchronous().EncodeAsImmutable()
             };
 
             try {

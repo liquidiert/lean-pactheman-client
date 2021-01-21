@@ -1,7 +1,7 @@
 using Bebop.Attributes;
 using Bebop.Runtime;
 using PacTheMan.Models;
-using System;
+using System.Collections.Concurrent;
 
 namespace lean_pactheman_client {
     [RecordHandler]
@@ -9,7 +9,7 @@ namespace lean_pactheman_client {
 
         [BindRecord(typeof(BebopRecord<ResetMsg>))]
         public static void HandleScorePointMsg(object client, ScorePointState msg) {
-            GameState.Instance.ScorePointState.ScorePointPositions = msg.ScorePointPositions;
+            GameState.Instance.ScorePointState.ScorePointPositions = new ConcurrentBag<Position>(msg.ScorePointPositions as Position[]);
         }
     }
 }

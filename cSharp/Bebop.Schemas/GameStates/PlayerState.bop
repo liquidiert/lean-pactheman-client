@@ -1,7 +1,7 @@
 [opcode(0x5)]
 struct PlayerState {
     MovingStates direction;
-    map[guid, int64] score;
+    map[guid, int64] scores;
     map[guid, int64] lives;
     map[guid, Position] playerPositions;
 }

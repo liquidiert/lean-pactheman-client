@@ -9,10 +9,12 @@ namespace lean_pactheman_client {
         private GameState() {
             var numProcs = System.Environment.ProcessorCount * 3;
             GhostPositions = new ConcurrentDictionary<string, Position>(numProcs, 4);
+            PlayerState = new ConcurrentPlayerState();
+            ScorePointState = new ConcurrentScorePointState();
         }
 
-        public PlayerState PlayerState { get; set; }
-        public ScorePointState ScorePointState { get; set; }
+        public ConcurrentPlayerState PlayerState { get; set; }
+        public ConcurrentScorePointState ScorePointState { get; set; }
         public ConcurrentDictionary<string, Position> GhostPositions { get; set; }
     }
 }
