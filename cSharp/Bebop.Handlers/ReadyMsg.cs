@@ -2,7 +2,7 @@ using Bebop.Attributes;
 using Bebop.Runtime;
 using PacTheMan.Models;
 
-namespace pactheman_client {
+namespace lean_pactheman_client {
     [RecordHandler]
     public static class ReadyHandler {
 

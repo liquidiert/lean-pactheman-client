@@ -9,20 +9,29 @@ using PacTheMan.Models;
 using Bebop.Runtime;
 
 namespace lean_pactheman_client {
-    class HumanPlayer {
+    public class Player {
 
         private TcpClient _client;
+        public Guid Id;
         public PlayerState InternalPlayerState;
+        private MoveAdapter _moveAdapter;
+
+        public Position Position {
+            get => (Position) InternalPlayerState.PlayerPositions[Id] ?? new Position();
+            set {
+                InternalPlayerState.PlayerPositions[Id] = value;
+            }
+        }
 
         private CancellationTokenSource _ctSource;
         private CancellationToken _ct;
         public bool Connected = false;
         public string Name { get; set; }
-        public Position Position { get; set; }
 
-        public HumanPlayer(string name) {
+        public Player(string name) {
             this.InternalPlayerState = new PlayerState();
             Name = name;
+            _moveAdapter = new MoveAdapter();
         }
 
         private Position UpdatePosition(float x = 0, int xFactor = 1, float y = 0, int yFactor = 1) {
@@ -53,7 +62,7 @@ namespace lean_pactheman_client {
         public async Task Exit() {
             Console.WriteLine("called exit");
             var exitMsg = new ExitMsg {
-                Session = InternalPlayerState.Session
+                Session = new SessionMsg()
             };
             var netMsg = new NetworkMessage {
                 IncomingOpCode = ExitMsg.OpCode,
@@ -110,7 +119,7 @@ namespace lean_pactheman_client {
             // send join
             var joinMsg = new JoinMsg {
                 PlayerName = Name,
-                Session = InternalPlayerState.Session
+                Session = new SessionMsg()
             };
             var netMsg = new NetworkMessage {
                 IncomingOpCode = JoinMsg.OpCode,
@@ -122,7 +131,7 @@ namespace lean_pactheman_client {
 
         public async Task SetReady() {
             var rdyMsg = new ReadyMsg {
-                Session = InternalPlayerState.Session,
+                Session = new SessionMsg(),
                 Ready = true
             };
             var netMsg = new NetworkMessage {
@@ -136,7 +145,7 @@ namespace lean_pactheman_client {
 
             Position updatedPosition;
 
-            updatedPosition = new Position();
+            updatedPosition = _moveAdapter.GetMove(this);
 
             // teleport if entering either left or right gate
             if (updatedPosition.X <= 38 || updatedPosition.X >= 1177) {
@@ -145,7 +154,6 @@ namespace lean_pactheman_client {
                 Position = updatedPosition;
             }
 
-            InternalPlayerState.PlayerPositions[(Guid)InternalPlayerState.Session.ClientId] = new Position { X = Position.X, Y = Position.Y };
             var msg = new NetworkMessage {
                 IncomingOpCode = PlayerState.OpCode,
                 IncomingRecord = InternalPlayerState.EncodeAsImmutable()

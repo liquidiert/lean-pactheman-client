@@ -5,7 +5,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 
-namespace pactheman_client {
+namespace lean_pactheman_client {
 
     [RecordHandler]
     public static class PlayerStateHandler {

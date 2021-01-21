@@ -4,7 +4,7 @@ using PacTheMan.Models;
 using System;
 using System.Linq;
 
-namespace pactheman_client {
+namespace lean_pactheman_client {
 
     [RecordHandler]
     public static class InitStateHandler {

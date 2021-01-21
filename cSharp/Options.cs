@@ -9,7 +9,7 @@ namespace lean_pactheman_client {
         [Option(Required = false, HelpText = "Set port to use.", Default = 5387)]
         public int Port { get; set; }
 
-        [Option("p", Required = true, HelpText = "Your name")]
+        [Option('p', "--playerName", Required = true, HelpText = "Your name")]
         public string PlayerName { get; set; }
     }
 }

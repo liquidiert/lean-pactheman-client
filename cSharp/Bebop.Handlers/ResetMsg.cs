@@ -3,7 +3,7 @@ using Bebop.Runtime;
 using PacTheMan.Models;
 using System;
 
-namespace pactheman_client {
+namespace lean_pactheman_client {
     [RecordHandler]
     public static class ResetHandler {
 

@@ -7,6 +7,7 @@ namespace lean_pactheman_client {
     class Program {
         static void Main(string[] args) {
             Console.WriteLine("Hello World!");
+            var map = MapReader.Instance;
             var parsedArgs = CommandLine.Parser.Default.ParseArguments<Options>(args)
                 .WithParsed(RunOptions)
                 .WithNotParsed(HandleParseError);
