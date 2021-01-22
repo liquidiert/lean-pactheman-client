@@ -11,14 +11,23 @@ namespace lean_pactheman_client {
 
         static Player player;
         public static EventWaitHandle WaitHandle = new AutoResetEvent(false);
-        static void Main(string[] args) {
+        static async Task Main(string[] args) {
             var map = MapReader.Instance;
             CommandLine.Parser.Default.ParseArguments<Options>(args)
-                .WithParsed(RunOptions)
+                .WithParsed(CreatePlayer)
                 .WithNotParsed(HandleParseError);
+
+            // await init state
+            WaitHandle.WaitOne();
+
+            // start game loop
+            while (true) {
+                await Task.Delay(50);
+                player.Move();
+            }
         }
 
-        static async void RunOptions(Options opts) {
+        static async void CreatePlayer(Options opts) {
             IPAddress ipAddress;
             // parse ip
             if (!IPAddress.TryParse(opts.Ip, out ipAddress)) {
@@ -31,6 +40,7 @@ namespace lean_pactheman_client {
             await player.Connect(ipAddress, opts.Port);
 
             if (!opts.Host) {
+                Console.WriteLine("Enter session id:");
                 var sessionId = Console.ReadLine();
                 player.Session = new SessionMsg {
                     SessionId = sessionId
@@ -42,14 +52,6 @@ namespace lean_pactheman_client {
 
             await player.SetReady();
 
-            // await init state
-            WaitHandle.WaitOne();
-
-            // start game loop
-            while (true) {
-                await Task.Delay(50);
-                player.Move();
-            }
         }
         static void HandleParseError(IEnumerable<Error> errs) {}
 

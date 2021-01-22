@@ -42,7 +42,12 @@ namespace lean_pactheman_client {
             _ctSource = new CancellationTokenSource();
             _ct = _ctSource.Token;
             _client = new TcpClient() { NoDelay = true };
-            await _client.ConnectAsync(address, port);
+
+            try {
+                await _client.ConnectAsync(address, port);
+            } catch (Exception ex) {
+                Console.WriteLine(ex.ToString());
+            }
 
             // start listener as seperate thread
             new Thread(() => Listen()).Start();

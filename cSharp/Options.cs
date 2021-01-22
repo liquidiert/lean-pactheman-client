@@ -12,7 +12,7 @@ namespace lean_pactheman_client {
         [Option(Required = true, HelpText = "The name with which you will participate at a pactheman game")]
         public string PlayerName { get; set; }
 
-        [Option('h', "--host", Required = false, HelpText = "Decide wheter to host or join a session; if not given client ask for session to join", Default = false)]
+        [Option(Required = false, HelpText = "Decide wheter to host or join a session; if not given client ask for session to join", Default = false)]
         public bool Host { get; set; }
     }
 }
