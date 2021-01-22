@@ -10,15 +10,12 @@ namespace lean_pactheman_client {
 
         [BindRecord(typeof(BebopRecord<SessionMsg>))]
         public static void HandleSessionMsg(object client, SessionMsg msg) {
-            /* HumanPlayer player = (HumanPlayer) client;
+            Player player = (Player) client;
 
-            player.InternalPlayerState.Session = msg;
+            player.Session = msg;
 
-            Console.WriteLine(player.InternalPlayerState.Session.ClientId);
-            Console.WriteLine(player.InternalPlayerState.Session.SessionId);
-
-            UIState.Instance.CurrentUIState = UIStates.PreLobby;
-            UIState.Instance.CurrentScreen = new PreLobby(player.InternalPlayerState.Session.SessionId.ToString()); */
+            Console.WriteLine(player.Session.ClientId);
+            Console.WriteLine(player.Session.SessionId);
         }
     }
 }

@@ -32,6 +32,8 @@ namespace lean_pactheman_client {
                 GameState.Instance.PlayerState.PlayerPositions.AddOrUpdate(pos.Key, (id) => (Position)pos.Value, (id, p) => (Position)pos.Value);
             }
 
+            Program.WaitHandle.Set();
+
         }
     }
 }

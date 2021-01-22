@@ -26,6 +26,7 @@ namespace lean_pactheman_client {
         private CancellationTokenSource _ctSource;
         private CancellationToken _ct;
         public bool Connected = false;
+        public bool Ready = false;
         public string Name { get; set; }
 
         public Player(string name) {

@@ -11,8 +11,9 @@ namespace lean_pactheman_client {
         public double h = 0;
         public double f = 0;
 
-        public Node(Node parent = null, Position? position = null) => (Parent, Position) = (parent, (Position) position);
-
+# nullable enable
+        public Node(Node? parent = null, Position? position = null) => (Parent, Position) = (parent, position);
+# nullable restore
         public override bool Equals(object toCompare) {
             if (toCompare == null) return false;
             if (!(toCompare is Node)) return false;
