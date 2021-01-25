@@ -18,5 +18,6 @@ namespace lean_pactheman_client {
         public ConcurrentPlayerState PlayerState { get; set; }
         public ConcurrentScorePointState ScorePointState { get; set; }
         public ConcurrentDictionary<string, Position> GhostPositions { get; set; }
+        public string OpponentName { get; set; }
     }
 }

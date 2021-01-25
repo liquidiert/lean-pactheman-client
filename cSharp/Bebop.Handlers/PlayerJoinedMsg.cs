@@ -9,15 +9,11 @@ namespace lean_pactheman_client {
     public static class PlayerJoinedHandler {
 
         [BindRecord(typeof(BebopRecord<PlayerJoinedMsg>))]
-        public static void HandlePlayerJoinedMsg(object client, PlayerJoinedMsg msg) {
-            /* HumanPlayer player = (HumanPlayer) client;
+        public async static void HandlePlayerJoinedMsg(object client, PlayerJoinedMsg msg) {
+            Console.WriteLine($"{msg.PlayerName} joined");
+            GameState.Instance.OpponentName = msg.PlayerName;
 
-            if (msg.Session != null) {
-                player.InternalPlayerState.Session = msg.Session;
-            }
-
-            UIState.Instance.CurrentUIState = UIStates.Lobby;
-            UIState.Instance.CurrentScreen = new Lobby(msg.PlayerName); */
+            await (client as Player).SetReady();
         }
     }
 }

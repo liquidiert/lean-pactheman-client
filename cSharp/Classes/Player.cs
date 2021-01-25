@@ -83,7 +83,7 @@ namespace lean_pactheman_client {
             // Were we already canceled?
             _ct.ThrowIfCancellationRequested();
 
-            Byte[] buffer = new Byte[1024];
+            Byte[] buffer = new Byte[2048];
 
             try {
                 while (true) {
@@ -162,7 +162,7 @@ namespace lean_pactheman_client {
             var msg = new NetworkMessage {
                 IncomingOpCode = PlayerState.OpCode,
                 IncomingRecord = GameState.Instance.PlayerState
-                    .ToSynchronous().EncodeAsImmutable()
+                    .ToSynchronous(Session).EncodeAsImmutable()
             };
 
             try {

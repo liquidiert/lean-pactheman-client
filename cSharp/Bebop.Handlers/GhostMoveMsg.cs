@@ -9,7 +9,7 @@ namespace lean_pactheman_client {
     public static class GhostMoveHandler {
 
         [BindRecord(typeof(BebopRecord<GhostMoveMsg>))]
-        public static void HandleGhostMove(object val, GhostMoveMsg msg) {
+        public static void HandleGhostMove(object client, GhostMoveMsg msg) {
             try {
                 foreach (var ghost in msg.GhostPositions) {
                     //GameEnv.Instance.Actors[ghost.Key].Position = (ghost.Value as Position).ToVec2();

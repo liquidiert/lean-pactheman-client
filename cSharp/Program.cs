@@ -50,8 +50,6 @@ namespace lean_pactheman_client {
                 await player.Host();
             }
 
-            await player.SetReady();
-
         }
         static void HandleParseError(IEnumerable<Error> errs) {}
 
