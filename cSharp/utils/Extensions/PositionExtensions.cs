@@ -8,6 +8,10 @@ namespace PacTheMan.Models {
             Console.WriteLine($"{pos.X} {pos.Y}");
         }
 
+        public static Position Copy(this Position pos) {
+            return new Position { X = pos.X, Y = pos.Y };
+        }
+
         /// <summary>
         /// Checks wheter a Position "otherPos" is in range of this position "selfPos"
         /// </summary>
@@ -94,6 +98,12 @@ namespace PacTheMan.Models {
         public static Position Round(this Position pos) {
             pos.X = (float)Math.Round(pos.X);
             pos.Y = (float)Math.Round(pos.Y);
+            return pos;
+        }
+
+        public static Position Floor(this Position pos) {
+            pos.X = (float)Math.Floor(pos.X);
+            pos.Y = (float)Math.Floor(pos.Y);
             return pos;
         }
 

@@ -19,5 +19,6 @@ namespace lean_pactheman_client {
         public ConcurrentScorePointState ScorePointState { get; set; }
         public ConcurrentDictionary<string, Position> GhostPositions { get; set; }
         public string OpponentName { get; set; }
+        public float RESET_COUNTER = 0f;
     }
 }

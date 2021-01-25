@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using PacTheMan.Models;
 
 namespace lean_pactheman_client {
     public class MapReader {
@@ -16,5 +17,14 @@ namespace lean_pactheman_client {
         }
 
         public int[,] Map { get; }
+
+        public bool IsValidPosition(Position pos) {
+            pos.Divide(64).Floor();
+            try {
+                return Map[(int)pos.X, (int)pos.Y] == 0;
+            } catch (IndexOutOfRangeException) {
+                return false;
+            }
+        }
     }
 }

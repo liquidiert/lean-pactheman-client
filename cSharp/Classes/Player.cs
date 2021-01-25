@@ -14,12 +14,12 @@ namespace lean_pactheman_client {
         private TcpClient _client;
         public SessionMsg Session;
         private MoveAdapter _moveAdapter;
-
+        public float MovementSpeed = 350f;
         public Position StartPosition { get; set; }
         public Position Position {
-            get => (Position) GameState.Instance.PlayerState.PlayerPositions[Session.ClientId ?? Guid.NewGuid()] ?? new Position();
+            get => (Position)GameState.Instance.PlayerState.PlayerPositions[(Guid)Session.ClientId] ?? new Position();
             set {
-                GameState.Instance.PlayerState.PlayerPositions[Session.ClientId ?? Guid.NewGuid()] = value;
+                GameState.Instance.PlayerState.PlayerPositions[(Guid)Session.ClientId] = value;
             }
         }
 
@@ -148,9 +148,15 @@ namespace lean_pactheman_client {
 
         public async void Move() {
 
-            Position updatedPosition;
+            Velocity updateVelocity;
 
-            updatedPosition = _moveAdapter.GetMove(this);
+            updateVelocity = _moveAdapter.GetMove(this);
+
+            Position updatedPosition = Position.Copy().AddOther(
+                updateVelocity.Normalize().Multiply(MovementSpeed).Multiply(0.0167f).ToPosition()
+            );
+
+            if (!MapReader.Instance.IsValidPosition(updatedPosition.Copy())) return;
 
             // teleport if entering either left or right gate
             if (updatedPosition.X <= 38 || updatedPosition.X >= 1177) {

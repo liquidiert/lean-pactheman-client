@@ -23,6 +23,12 @@ namespace lean_pactheman_client {
             // start game loop
             while (true) {
                 await Task.Delay(50);
+                if (GameState.Instance.RESET_COUNTER > 0) {
+                    GameState.Instance.RESET_COUNTER -= 0.05f;
+                    if (GameState.Instance.RESET_COUNTER > 0) {
+                        continue;
+                    }
+                }
                 player.Move();
             }
         }
