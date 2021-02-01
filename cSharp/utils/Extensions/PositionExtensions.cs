@@ -111,5 +111,12 @@ namespace PacTheMan.Models {
             return Math.Sqrt((vector.X - toCompare.X) * (vector.X - toCompare.X) + (vector.Y - toCompare.Y) * (vector.Y - toCompare.Y));
         }
 
+        public static Position Interpolated(this Position vector, Position other) {
+            return new Position {
+                X = (vector.X + other.X) / 2,
+                Y = (vector.Y + other.Y) / 2
+            };
+        }
+
     }
 }

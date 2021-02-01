@@ -1,9 +1,8 @@
 using Bebop.Attributes;
 using Bebop.Runtime;
 using PacTheMan.Models;
-using System;
 using System.Linq;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 
 namespace lean_pactheman_client {
 
@@ -12,23 +11,26 @@ namespace lean_pactheman_client {
 
         [BindRecord(typeof(BebopRecord<PlayerState>))]
         public static void HandlePlayerStateMsg(object client, PlayerState msg) {
-            /* HumanPlayer player = (HumanPlayer) client;
+            Player player = (Player) client;
 
-            player.InternalPlayerState.PlayerPositions = msg.PlayerPositions;
-            player.InternalPlayerState.Lives = msg.Lives;
-            player.InternalPlayerState.Score = msg.Score;
-
-            var clientId = player.InternalPlayerState.Session.ClientId;
-            if (msg.Session.ClientId != clientId) {
-                (GameEnv.Instance.Actors["opponent"] as Player).CurrentMovingState = msg.Direction;
-                var oppPos = new Dictionary<Guid, BasePosition>(player.InternalPlayerState.PlayerPositions).First(p => p.Key != clientId).Value;
-                if (oppPos.X > 70 && oppPos.X < 1145) {
-                    GameEnv.Instance.Actors["opponent"].Position =
-                        GameEnv.Instance.Actors["opponent"].Position.Interpolated(new Vector2 { X = oppPos.X, Y = oppPos.Y });
-                } else {
-                    GameEnv.Instance.Actors["opponent"].Position = new Vector2 { X = oppPos.X, Y = oppPos.Y };
+            foreach (var clientId in msg.PlayerPositions.Keys) {
+                GameState.Instance.PlayerState.Lives
+                    .AddOrUpdate(clientId, id => msg.Lives[clientId], (id, live) => msg.Lives[clientId]);
+                GameState.Instance.PlayerState.Scores
+                    .AddOrUpdate(clientId, id => msg.Scores[clientId], (id, score) => msg.Scores[clientId]);
+                GameState.Instance.ScorePointState.ScorePointPositions = 
+                    new ConcurrentBag<Position>(GameState.Instance.ScorePointState.ScorePointPositions
+                        .Intersect(msg.ScorePositions.Select(p => (Position)p)));
+                if (clientId != player.Session.ClientId) {
+                    var oppPos = (Position)msg.PlayerPositions[clientId];
+                    if (oppPos.X > 70 && oppPos.X < 1145) {
+                        GameState.Instance.PlayerState.PlayerPositions[clientId] =
+                            GameState.Instance.PlayerState.PlayerPositions[clientId].Interpolated(oppPos);
+                    } else {
+                        GameState.Instance.PlayerState.PlayerPositions[clientId] = oppPos;
+                    }
                 }
-            } */
+            }
         }
     }
 }

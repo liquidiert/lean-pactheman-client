@@ -25,7 +25,9 @@ namespace lean_pactheman_client {
                 Scores = this.Scores.ToDictionary((kV) => kV.Key, (kV) => kV.Value),
                 Lives = this.Lives.ToDictionary((kV) => kV.Key, (kV) => kV.Value),
                 PlayerPositions = this.PlayerPositions
-                    .ToDictionary((kV) => kV.Key, (kV) => (BasePosition)kV.Value)
+                    .ToDictionary((kV) => kV.Key, (kV) => (BasePosition)kV.Value),
+                ScorePositions = GameState.Instance.ScorePointState.ScorePointPositions
+                    .ToArray<BasePosition>()
             };
         }
     }
