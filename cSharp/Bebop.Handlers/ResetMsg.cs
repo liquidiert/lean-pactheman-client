@@ -11,6 +11,7 @@ namespace lean_pactheman_client {
             Player player = (Player)client;
             GameState.Instance.RESET_COUNTER = 4f;
             player.Position = player.StartPosition;
+            GameState.Instance.SignalReset();
         }
     }
 }

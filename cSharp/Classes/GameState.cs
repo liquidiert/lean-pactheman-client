@@ -15,10 +15,16 @@ namespace lean_pactheman_client {
             ScorePointState = new ConcurrentScorePointState();
         }
 
+        public event EventHandler ResetEvent;
+        public void SignalReset() {
+            ResetEvent?.Invoke(this, new EventArgs());
+        }
+
         public ConcurrentPlayerState PlayerState { get; set; }
         public ConcurrentScorePointState ScorePointState { get; set; }
         public ConcurrentDictionary<string, Position> GhostPositions { get; set; }
         public string OpponentName { get; set; }
         public float RESET_COUNTER = 0f;
+
     }
 }

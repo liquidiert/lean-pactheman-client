@@ -2,6 +2,8 @@ using Bebop.Attributes;
 using Bebop.Runtime;
 using PacTheMan.Models;
 using System;
+using System.Linq;
+using System.Collections.Concurrent;
 
 namespace lean_pactheman_client {
 
@@ -31,6 +33,8 @@ namespace lean_pactheman_client {
             foreach (var pos in msg.PlayerInitPositions) {
                 GameState.Instance.PlayerState.PlayerPositions.AddOrUpdate(pos.Key, (id) => (Position)pos.Value, (id, p) => (Position)pos.Value);
             }
+
+            GameState.Instance.ScorePointState.ScorePointPositions = new ConcurrentBag<Position>(msg.ScorePointInitPositions.Select(p => (Position)p));
 
             Program.WaitHandle.Set();
 

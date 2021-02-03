@@ -153,7 +153,7 @@ namespace lean_pactheman_client {
             updateVelocity = _moveAdapter.GetMove(this);
 
             Position updatedPosition = Position.Copy().AddOther(
-                updateVelocity.Normalize().Multiply(MovementSpeed).Multiply(0.0167f).ToPosition()
+                updateVelocity.Multiply(MovementSpeed).Multiply(0.0167f).ToPosition()
             );
 
             if (!MapReader.Instance.IsValidPosition(updatedPosition.Copy())) return;
