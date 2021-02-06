@@ -22,6 +22,9 @@ namespace lean_pactheman_client {
                 GameState.Instance.PlayerState.PlayerPositions[(Guid)Session.ClientId] = value;
             }
         }
+        public Position DownScaledPosition {
+            get => new Position { X = (float)Math.Floor(Position.X / 64), Y = (float)Math.Floor(Position.Y / 64) };
+        }
 
         private CancellationTokenSource _ctSource;
         private CancellationToken _ct;

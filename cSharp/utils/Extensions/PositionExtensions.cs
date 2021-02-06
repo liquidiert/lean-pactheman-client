@@ -117,5 +117,9 @@ namespace PacTheMan.Models {
             };
         }
 
+        public static Position Downscaled(this Position pos) {
+            return new Position { X = (float)Math.Floor(pos.X / 64), Y = (float)Math.Floor(pos.Y / 64) };
+        }
+
     }
 }
