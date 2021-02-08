@@ -5,6 +5,10 @@ namespace lean_pactheman_client {
         public float X { get; set; }
         public float Y { get; set; }
 
+        public Velocity() {
+            this.X = 0;
+            this.Y = 0;
+        }
         public Velocity(Position pos) {
             this.X = pos.X;
             this.Y = pos.Y;

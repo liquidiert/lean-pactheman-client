@@ -21,7 +21,7 @@ namespace lean_pactheman_client {
         }
 
         public override int GetHashCode() {
-            return Position.GetHashCode() ^ g.GetHashCode() ^ h.GetHashCode() ^ f.GetHashCode();
+            return Position.GetHashCode();
         }
 
         # nullable enable

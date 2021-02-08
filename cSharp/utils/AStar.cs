@@ -7,16 +7,12 @@ namespace lean_pactheman_client {
 
     sealed class AStar {
 
-        private static readonly Lazy<AStar> lazy = new Lazy<AStar>(() => new AStar());
-        public static AStar Instance { get { return lazy.Value; } }
-        private AStar() { }
-
         // this heuristic could be changed TODO: add adapter?
-        double ManhattanDistance(Position start, Position end) {
+        static double ManhattanDistance(Position start, Position end) {
             return Math.Abs(start.X - end.X) + Math.Abs(start.Y - end.Y);
         }
 
-        public List<Position> GetPath(Position start, Position end, int iterDepth = -3) {
+        public static List<Position> GetPath(Position start, Position end, int iterDepth = -3) {
 
             int[,] maze = MapReader.Instance.Map;
             var startNode = new Node(null, start);
@@ -62,12 +58,12 @@ namespace lean_pactheman_client {
                         Y = currentNode.Position.Y + newPosition.Y
                     };
 
+                    // skip every point that is not "walkable"
+                    if (maze[(int)nodePosition.X, (int)nodePosition.Y] != 0) continue;
+
                     if (nodePosition.X > (maze.GetLength(0) - 1) || nodePosition.X <= 0 // valid cause map has border
                         || nodePosition.Y > (maze.GetLength(1) - 1) || nodePosition.Y <= 0)
                         continue;
-
-                    // skip every point that is not "walkable"
-                    if (maze[(int)nodePosition.X, (int)nodePosition.Y] != 0) continue;
 
                     var newNode = new Node(currentNode, nodePosition);
 
@@ -75,15 +71,15 @@ namespace lean_pactheman_client {
 
                 }
 
-                foreach (var child in children) {
+                for (int i = 0; i < children.Count; i++) {
 
-                    child.g = currentNode.g + 1;
-                    child.h = ManhattanDistance(child.Position, endNode.Position);
-                    child.f = child.g + child.h;
+                    if (openList.Contains(children[i])) continue;
 
-                    if (openList.Contains(child)) continue;
+                    children[i].g = currentNode.g + 1;
+                    children[i].h = ManhattanDistance(children[i].Position, endNode.Position);
+                    children[i].f = children[i].g + children[i].h;
 
-                    openList.Add(child);
+                    openList.Add(children[i]);
                 }
 
                 iteration++;

@@ -22,10 +22,10 @@ namespace PacTheMan.Models {
             return Math.Abs(selfPos.X - otherPos.X) <= range && (Math.Abs(selfPos.Y - otherPos.Y) <= range);
         }
 
-        public static Position Normalize(this Position vector) {
-            vector.Divide(Math.Sqrt(Math.Pow(vector.X, 2) + Math.Pow(vector.Y, 2)));
-            vector.Round();
-            return vector;
+        public static Position Normalize(this Position pos) {
+            pos.Divide(Math.Sqrt(Math.Pow(pos.X, 2) + Math.Pow(pos.Y, 2)));
+            pos.Round();
+            return pos;
         }
 
         public static Position AddOther(this Position selfPos, Position other) {
@@ -106,14 +106,18 @@ namespace PacTheMan.Models {
             return pos;
         }
 
-        public static double Distance(this Position vector, Position toCompare) {
-            return Math.Sqrt((vector.X - toCompare.X) * (vector.X - toCompare.X) + (vector.Y - toCompare.Y) * (vector.Y - toCompare.Y));
+        public static double Distance(this Position pos, Position toCompare) {
+            return Math.Sqrt((pos.X - toCompare.X) * (pos.X - toCompare.X) + (pos.Y - toCompare.Y) * (pos.Y - toCompare.Y));
         }
 
-        public static Position Interpolated(this Position vector, Position other) {
+        public static double ManhattanDistance(this Position pos, Position toCompare) {
+            return Math.Abs(pos.X - toCompare.X) + Math.Abs(pos.Y - toCompare.Y);
+        }
+
+        public static Position Interpolated(this Position pos, Position other) {
             return new Position {
-                X = (vector.X + other.X) / 2,
-                Y = (vector.Y + other.Y) / 2
+                X = (pos.X + other.X) / 2,
+                Y = (pos.Y + other.Y) / 2
             };
         }
 
