@@ -58,12 +58,12 @@ namespace lean_pactheman_client {
                         Y = currentNode.Position.Y + newPosition.Y
                     };
 
-                    // skip every point that is not "walkable"
-                    if (maze[(int)nodePosition.X, (int)nodePosition.Y] != 0) continue;
-
                     if (nodePosition.X > (maze.GetLength(0) - 1) || nodePosition.X <= 0 // valid cause map has border
                         || nodePosition.Y > (maze.GetLength(1) - 1) || nodePosition.Y <= 0)
                         continue;
+
+                    // skip every point that is not "walkable"
+                    if (maze[(int)nodePosition.X, (int)nodePosition.Y] != 0) continue;
 
                     var newNode = new Node(currentNode, nodePosition);
 
@@ -73,11 +73,11 @@ namespace lean_pactheman_client {
 
                 for (int i = 0; i < children.Count; i++) {
 
-                    if (openList.Contains(children[i])) continue;
-
                     children[i].g = currentNode.g + 1;
                     children[i].h = ManhattanDistance(children[i].Position, endNode.Position);
                     children[i].f = children[i].g + children[i].h;
+
+                    if (openList.Contains(children[i])) continue;
 
                     openList.Add(children[i]);
                 }

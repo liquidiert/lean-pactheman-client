@@ -34,11 +34,8 @@ namespace lean_pactheman_client {
             var sizeFactor = Math.Floor((float) regionSize / 2);
             var xIndex = 0;
             var yIndex = 0;
-            Console.Write("center: ");
-            center.Print();
             for (int h = (int) (center.Y - sizeFactor); h <= center.Y + sizeFactor; h++) {
                 for (int w = (int) (center.X - sizeFactor); w <= center.X + sizeFactor; w++) {
-                    Console.WriteLine($"pos: {w} {h}");
                     res[xIndex, yIndex] = new Tuple<Position, T>(new Position { X = w, Y = h }, arr[w, h]);
                     xIndex++;
                 }

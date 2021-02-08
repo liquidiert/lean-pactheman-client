@@ -25,7 +25,8 @@ namespace lean_pactheman_client {
         }
         public static Velocity PerformMove(Player player) {
             Position target = lastTarget;
-            var ghostToClose = GameState.Instance.GhostPositions.FirstOrDefault(pair => pair.Value.Distance(player.Position) < 265).Value;
+            var ghostToClose = GameState.Instance.GhostPositions
+                .FirstOrDefault(pair => pair.Value.Distance(player.Position) < 400).Value;
             if (ghostToClose != null) {
                 if (fleeMemory.Count == 0) {
                     targetMemory.Clear();
@@ -37,11 +38,13 @@ namespace lean_pactheman_client {
                         .Where(t => t.Item2 == 0).Select(t => t.Item1).ToList();
                     // search a path to a random flee point via A*
                     fleeMemory = AStar.GetPath(player.DownScaledPosition,
-                        possibleFleePoints[new Random().Next(possibleFleePoints.Count)].Downscaled());
+                        possibleFleePoints[new Random().Next(possibleFleePoints.Count)]) ?? new List<Position>();
                 }
                 if (target.IsEqualUpToRange(player.Position, 5f)) {
-                    target = fleeMemory.Pop().Multiply(64);
-                    lastTarget = target?.Add(32);
+                    try {
+                        target = fleeMemory.Pop().Multiply(64);
+                        lastTarget = target?.Add(32);
+                    } catch {}
                 }
             } else { // no ghosts detected
                 // only change target if none is set or we are close enough
