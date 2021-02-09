@@ -7,6 +7,10 @@ using CommandLine;
 using PacTheMan.Models;
 
 namespace lean_pactheman_client {
+
+    static class Constants {
+        public const float FRAME_DELTA_APPROX = 0.0167f;
+    }
     class Program {
 
         static Player player;

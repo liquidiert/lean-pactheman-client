@@ -12,7 +12,9 @@ namespace lean_pactheman_client {
             return Math.Abs(start.X - end.X) + Math.Abs(start.Y - end.Y);
         }
 
-        public static List<Position> GetPath(Position start, Position end, int iterDepth = -3) {
+# nullable enable
+        public static List<Position> GetPath(Position start, Position end, int iterDepth = -3, List<Position>? positionsToIgnore = null) {
+#nullable restore
 
             int[,] maze = MapReader.Instance.Map;
             var startNode = new Node(null, start);
@@ -64,6 +66,8 @@ namespace lean_pactheman_client {
 
                     // skip every point that is not "walkable"
                     if (maze[(int)nodePosition.X, (int)nodePosition.Y] != 0) continue;
+                    // skip every point that shall be ignored
+                    if (positionsToIgnore?.Contains(nodePosition) ?? false) continue;
 
                     var newNode = new Node(currentNode, nodePosition);
 
