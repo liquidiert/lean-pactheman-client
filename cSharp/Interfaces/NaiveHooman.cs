@@ -11,19 +11,19 @@ namespace lean_pactheman_client {
         public Position Pos { get; set; }
         public DistanceWrapper(double dist, Position pos) => (Distance, Pos) = (dist, pos);
     }
-    public static class NaiveHooman {
-        static Position lastTarget;
-        static List<Position> targetMemory = new List<Position>();
-        static List<Position> fleeMemory = new List<Position>();
+    public class NaiveHooman : IMove {
+        Position lastTarget;
+        List<Position> targetMemory = new List<Position>();
+        List<Position> fleeMemory = new List<Position>();
 
-        public static void Init() {
+        public NaiveHooman() {
             GameState.Instance.ResetEvent += (object sender, EventArgs args) => {
                 lastTarget = null;
                 targetMemory.Clear();
                 fleeMemory.Clear();
             };
         }
-        public static Velocity PerformMove(Player player) {
+        public Velocity PerformMove(Player player) {
             Position target = lastTarget;
             var ghostTooClose = GameState.Instance.GhostPositions
                 .FirstOrDefault(pair => pair.Value.ManhattanDistance(player.Position) < 128).Value;

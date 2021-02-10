@@ -1,12 +1,13 @@
 namespace lean_pactheman_client {
-    public class MoveAdapter : IMove {
+    public class MoveAdapter {
+
+        IMove moveInstructor;
 
         public MoveAdapter() {
-            // add init code here
-            NaiveHooman.Init();
+            // exchange SimpleMoveExample with your own implementation here
+            moveInstructor = new NaiveHooman();
         }
 
-        // exchange SimpleMoveExample with your own implementation here
-        public Velocity GetMove(Player player) => NaiveHooman.PerformMove(player).Normalize();
+        public Velocity GetMove(Player player) => moveInstructor.PerformMove(player).Normalize();
     }
 }
