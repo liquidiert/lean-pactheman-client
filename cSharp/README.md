@@ -18,7 +18,7 @@ Per default the lean client tries to connect to a server instance at `127.0.0.0:
 Also the default behavior is trying to join a session, in which case the client asks for a SessionId. This can be changed via the `--host` flag.
 
 ## Use it
-To start the lean client either:
+To start the client either:
 - execute `dotnet run --playername {your name}`; if you directly use the source
 - or execute the *prebuilt binary* with `--playername {your name}` as argument
 
@@ -52,6 +52,6 @@ namespace lean_pactheman_client {
 
 > After you've added your implementation, exchange `SimpleMoveExample` with your implementations' class name in `MoveAdapter.cs`.
 
-## Extensions
+## Extension Methods
 There are some useful extension methods which can be found at `Utils/Extensions`. An example is the extension method `AddMany` for `Lists` that adds many in place created entries.  
 Sometimes you have to import `PacTheMan.Models` because some extensions (e.g. for `Position`) are specified in this namespace.
