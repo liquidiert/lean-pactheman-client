@@ -54,6 +54,7 @@ namespace lean_pactheman_client {
                 if (MapReader.Instance.IsValidPosition(adjacentNode.Position)) {
                     if (openList.All(n => n.Position != adjacentNode.Position)
                         && AdjacencyList.All(n => n.Position != adjacentNode.Position)) {
+                        adjacentNode.Neighbours.Add(currentNode);
                         currentNode.Neighbours.Add(adjacentNode);
                         openList.Add(adjacentNode);
                     }
@@ -63,6 +64,7 @@ namespace lean_pactheman_client {
                 if (MapReader.Instance.IsValidPosition(adjacentNode.Position)) {
                     if (openList.All(n => n.Position != adjacentNode.Position)
                         && AdjacencyList.All(n => n.Position != adjacentNode.Position)) {
+                        adjacentNode.Neighbours.Add(currentNode);
                         currentNode.Neighbours.Add(adjacentNode);
                         openList.Add(adjacentNode);
                     }
@@ -72,6 +74,7 @@ namespace lean_pactheman_client {
                 if (MapReader.Instance.IsValidPosition(adjacentNode.Position)) {
                     if (openList.All(n => n.Position != adjacentNode.Position)
                         && AdjacencyList.All(n => n.Position != adjacentNode.Position)) {
+                        adjacentNode.Neighbours.Add(currentNode);
                         currentNode.Neighbours.Add(adjacentNode);
                         openList.Add(adjacentNode);
                     }
@@ -81,16 +84,12 @@ namespace lean_pactheman_client {
                 if (MapReader.Instance.IsValidPosition(adjacentNode.Position)) {
                     if (openList.All(n => n.Position != adjacentNode.Position)
                         && AdjacencyList.All(n => n.Position != adjacentNode.Position)) {
+                        adjacentNode.Neighbours.Add(currentNode);
                         currentNode.Neighbours.Add(adjacentNode);
                         openList.Add(adjacentNode);
                     }
                 }
-                AdjacencyList.Add(currentNode);
-            }
-            foreach (var node in AdjacencyList) {
-                foreach (var neighbour in node.Neighbours) {
-                    neighbour.Position.Print();
-                }
+                if (currentNode.Neighbours.Count > 0) AdjacencyList.Add(currentNode);
             }
         }
     }
