@@ -20,11 +20,17 @@ namespace lean_pactheman_client {
             ResetEvent?.Invoke(this, new EventArgs());
         }
 
+        public event EventHandler ExitEvent;
+        public void SignalExit() {
+            ExitEvent?.Invoke(this, new EventArgs());
+        }
+
+        // state of the two pactheman players
         public ConcurrentPlayerState PlayerState { get; set; }
+        // state of the score points; currently only stores their positions
         public ConcurrentScorePointState ScorePointState { get; set; }
+        // ghost positions
         public ConcurrentDictionary<string, Position> GhostPositions { get; set; }
-        public string OpponentName { get; set; }
-        public float RESET_COUNTER = 0f;
 
     }
 }

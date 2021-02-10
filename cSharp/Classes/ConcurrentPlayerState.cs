@@ -6,7 +6,7 @@ using PacTheMan.Models;
 namespace lean_pactheman_client {
     public class ConcurrentPlayerState {
 
-        public MovingStates Direction { get; set; }
+        public MovingState Direction { get; set; }
         public ConcurrentDictionary<Guid, Position> PlayerPositions { get; set; }
         public ConcurrentDictionary<Guid, long> Scores { get; set; }
         public ConcurrentDictionary<Guid, long> Lives { get; set; }

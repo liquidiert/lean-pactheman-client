@@ -9,7 +9,7 @@ namespace lean_pactheman_client {
 
         [BindRecord(typeof(BebopRecord<ReadyMsg>))]
         public static void HandleReadyMsg(object client, ReadyMsg msg) {
-            Console.WriteLine($"{GameState.Instance.OpponentName} is ready. Game will start soon.");
+            Console.WriteLine($"{PlayerJoinedHandler.OpponentName} is ready. Game will start soon.");
         }
     }
 }

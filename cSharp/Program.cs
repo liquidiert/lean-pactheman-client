@@ -8,13 +8,19 @@ using PacTheMan.Models;
 
 namespace lean_pactheman_client {
 
-    static class Constants {
+    public static class Constants {
         public const float FRAME_DELTA_APPROX = 0.0167f;
     }
     class Program {
 
         static Player player;
+        static float RESET_COUNTER = 0f;
         public static EventWaitHandle WaitHandle = new AutoResetEvent(false);
+        
+        public static void SetResetCounter(float counter) {
+            RESET_COUNTER = counter;
+        }
+        
         static async Task Main(string[] args) {
             var map = MapReader.Instance;
             CommandLine.Parser.Default.ParseArguments<Options>(args)
@@ -27,9 +33,9 @@ namespace lean_pactheman_client {
             // start game loop
             while (true) {
                 await Task.Delay(50);
-                if (GameState.Instance.RESET_COUNTER > 0) {
-                    GameState.Instance.RESET_COUNTER -= 0.05f;
-                    if (GameState.Instance.RESET_COUNTER > 0) {
+                if (RESET_COUNTER > 0) {
+                    RESET_COUNTER -= 0.05f;
+                    if (RESET_COUNTER > 0) {
                         continue;
                     }
                 }

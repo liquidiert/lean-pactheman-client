@@ -8,6 +8,6 @@ namespace lean_pactheman_client {
             moveInstructor = new NaiveHooman();
         }
 
-        public Velocity GetMove(Player player) => moveInstructor.PerformMove(player).Normalize();
+        public Velocity GetMove(PlayerInfo info) => moveInstructor.PerformMove(info).Normalize();
     }
 }

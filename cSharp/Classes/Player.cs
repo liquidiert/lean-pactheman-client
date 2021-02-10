@@ -9,12 +9,29 @@ using PacTheMan.Models;
 using Bebop.Runtime;
 
 namespace lean_pactheman_client {
+
+    public class PlayerInfo {
+        public SessionMsg Session { get; }
+        public float MovementSpeed { get; }
+        public Position StartPosition { get; }
+        public Position Position { get; }
+        public Position DownScaledPosition {
+            get => new Position { X = (float)Math.Floor(Position.X / 64), Y = (float)Math.Floor(Position.Y / 64) };
+        }
+
+        public PlayerInfo(Player player) {
+            this.Session = player.Session;
+            this.MovementSpeed = player.MovementSpeed;
+            this.StartPosition = player.StartPosition;
+            this.Position = player.Position;
+        }
+    }
     public class Player {
 
         private TcpClient _client;
         public SessionMsg Session;
         private MoveAdapter _moveAdapter;
-        public float MovementSpeed = 350f;
+        public float MovementSpeed { get => 350f; }
         public Position StartPosition { get; set; }
         public Position Position {
             get => (Position)GameState.Instance.PlayerState.PlayerPositions[(Guid)Session.ClientId] ?? new Position();
@@ -29,7 +46,6 @@ namespace lean_pactheman_client {
         private CancellationTokenSource _ctSource;
         private CancellationToken _ct;
         public bool Connected = false;
-        public bool Ready = false;
         public string Name { get; set; }
 
         public Player(string name) {
@@ -42,6 +58,7 @@ namespace lean_pactheman_client {
         }
 
         public async Task Connect(IPAddress address, int port) {
+            if (Connected) return;
             _ctSource = new CancellationTokenSource();
             _ct = _ctSource.Token;
             _client = new TcpClient() { NoDelay = true };
@@ -153,7 +170,7 @@ namespace lean_pactheman_client {
 
             Velocity updateVelocity;
 
-            updateVelocity = _moveAdapter.GetMove(this);
+            updateVelocity = _moveAdapter.GetMove(new PlayerInfo(this));
 
             Position updatedPosition = Position.Copy().AddOther(
                 updateVelocity.Multiply(MovementSpeed).Multiply(Constants.FRAME_DELTA_APPROX).ToPosition()

@@ -52,6 +52,26 @@ namespace lean_pactheman_client {
 
 > After you've added your implementation, exchange `SimpleMoveExample` with your implementations' class name in `MoveAdapter.cs`.
 
+### Game state
+The game state — things like the current position of the ghosts or score points — is accessible via the `GameState.Instance`.  
+It contains:
+- *PlayerState*: `PlayerState`; A separate state class that contains:
+  - *Direction*: `MovingState`; The current direction your player is facing to. Changing this is optional and only needed if you wish to see your player facing in the direction if the server is running in GUI mode.
+  - *PlayerPositions*: `ConcurrentDictionary<Guid, Position>`; A dictionary consisting of player id and corresponding position
+  - *Scores*: `ConcurrentDictionary<Guid, long> Scores`; A dictionary consisting of player id and corresponding score
+  - *Lives*: `ConcurrentDictionary<Guid, long> Scores`; A dictionary consisting of player id and corresponding lives
+- *ScorePointState*: `ScorePointState`; A separate state class that contains:
+  - *ScorePointPositions*: `ConcurrentBag<Position>`; A concurrent bag holding each score point position
+- *GhostPositions*: `ConcurrentDictionary`; A dictionary consisting of the ghost name (`string`) as key and its corresponding `Position` as values
+
+### The PlayerInfo class
+This is a read-only class containing all important information of your player:
+- *Session*: `SessionMsg`; Contains SessionId and ClientId of your player
+- *MovementSpeed*: `float`
+- *StartPosition*: `Position`
+- *Position*: `Position`
+- *DownScaledPosition*: `Position`; The current position of the player already down scaled for usage in A*
+
 ## Extension Methods
 There are some useful extension methods which can be found at `Utils/Extensions`. An example is the extension method `AddMany` for `Lists` that adds many in place created entries.  
 Sometimes you have to import `PacTheMan.Models` because some extensions (e.g. for `Position`) are specified in this namespace.
