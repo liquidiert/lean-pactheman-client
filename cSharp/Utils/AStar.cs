@@ -5,7 +5,44 @@ using PacTheMan.Models;
 
 namespace lean_pactheman_client {
 
-    sealed class AStar {
+    sealed class AStarNode {
+
+        public AStarNode Parent;
+        public Position Position;
+
+        public double g = 0;
+        public double h = 0;
+        public double f = 0;
+
+# nullable enable
+        public AStarNode(AStarNode? parent = null, Position? position = null) => (Parent, Position) = (parent, position);
+# nullable restore
+        public override bool Equals(object toCompare) {
+            if (toCompare == null) return false;
+            if (!(toCompare is AStarNode)) return false;
+            return this.Position == ((AStarNode)toCompare).Position;
+        }
+
+        public override int GetHashCode() {
+            return Position.GetHashCode() ^ g.GetHashCode() ^ h.GetHashCode() ^ f.GetHashCode();
+        }
+
+#nullable enable
+        public static bool operator ==(AStarNode? a, AStarNode? b) {
+            var unavailable = new Position { X = -1, Y = -1 };
+            return (a ??= new AStarNode(position: unavailable)).Position
+                == (b ??= new AStarNode(position: unavailable)).Position;
+        }
+
+        public static bool operator !=(AStarNode? a, AStarNode? b) {
+            var unavailable = new Position { X = -1, Y = -1 };
+            return (a ??= new AStarNode(position: unavailable)).Position
+                != (b ??= new AStarNode(position: unavailable)).Position;
+        }
+#nullable restore
+    }
+
+    sealed public class AStar {
 
         // this heuristic could be changed TODO: add adapter?
         static double ManhattanDistance(Position start, Position end) {
@@ -17,11 +54,11 @@ namespace lean_pactheman_client {
 #nullable restore
 
             int[,] maze = MapReader.Instance.Map;
-            var startNode = new Node(null, start);
-            var endNode = new Node(null, end);
+            var startNode = new AStarNode(null, start);
+            var endNode = new AStarNode(null, end);
 
-            var openList = new List<Node>();
-            var closedList = new List<Node>();
+            var openList = new List<AStarNode>();
+            var closedList = new List<AStarNode>();
 
             openList.Add(startNode);
 
@@ -46,7 +83,7 @@ namespace lean_pactheman_client {
                     return path;
                 }
 
-                var children = new List<Node>();
+                var children = new List<AStarNode>();
                 // adjacent squares -> left, right, top, bottom
                 foreach (var newPosition in new List<Position>().AddMany(
                     new Position { X = -1, Y = 0 }, // left
@@ -69,7 +106,7 @@ namespace lean_pactheman_client {
                     // skip every point that shall be ignored
                     if (positionsToIgnore?.Contains(nodePosition) ?? false) continue;
 
-                    var newNode = new Node(currentNode, nodePosition);
+                    var newNode = new AStarNode(currentNode, nodePosition);
 
                     if (!closedList.Contains(newNode)) children.Add(newNode);
 

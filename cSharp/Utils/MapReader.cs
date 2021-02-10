@@ -24,7 +24,7 @@ namespace lean_pactheman_client {
         public int[,] Map { get; }
 
         public bool IsValidPosition(Position pos) {
-            pos.Divide(64).Floor();
+            if (pos.X > 19 || pos.Y > 22) throw new ArgumentException("Position must be down scaled");
             try {
                 return Map[(int)pos.X, (int)pos.Y] == 0;
             } catch (IndexOutOfRangeException) {

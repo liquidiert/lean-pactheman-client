@@ -22,7 +22,7 @@ namespace lean_pactheman_client {
         }
         
         static async Task Main(string[] args) {
-            var map = MapReader.Instance;
+            await Task.Run(() => MapGraph.Instance.Init(MapReader.Instance.Map));
             CommandLine.Parser.Default.ParseArguments<Options>(args)
                 .WithParsed(CreatePlayer)
                 .WithNotParsed(HandleParseError);

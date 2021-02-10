@@ -176,7 +176,7 @@ namespace lean_pactheman_client {
                 updateVelocity.Multiply(MovementSpeed).Multiply(Constants.FRAME_DELTA_APPROX).ToPosition()
             );
 
-            if (!MapReader.Instance.IsValidPosition(updatedPosition.Copy())) return;
+            if (!MapReader.Instance.IsValidPosition(updatedPosition.Copy().Downscaled())) return;
 
             // teleport if entering either left or right gate
             if (updatedPosition.X <= 38 || updatedPosition.X >= 1177) {
