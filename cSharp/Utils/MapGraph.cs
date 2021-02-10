@@ -87,6 +87,11 @@ namespace lean_pactheman_client {
                 }
                 AdjacencyList.Add(currentNode);
             }
+            foreach (var node in AdjacencyList) {
+                foreach (var neighbour in node.Neighbours) {
+                    neighbour.Position.Print();
+                }
+            }
         }
     }
 }
