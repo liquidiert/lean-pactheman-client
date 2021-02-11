@@ -1,13 +1,14 @@
 using System;
 using System.Linq;
 using PacTheMan.Models;
-using System.Threading.Tasks;
 using System.Collections.Generic;
 
 namespace lean_pactheman_client {
 
     sealed public class GraphNode {
-        public Position Position { get; set; }
+
+        public bool Visited { get; set; } = false;
+        public Position Position { get; }
         public List<GraphNode> Neighbours { get; set; } = new List<GraphNode>(4);
 
         public GraphNode(Position pos) => (Position) = (pos);
@@ -41,7 +42,9 @@ namespace lean_pactheman_client {
         public static MapGraph Instance { get => lazy.Value; }
         private MapGraph() { }
 
-        public List<GraphNode> AdjacencyList { get; } = new List<GraphNode>();
+        private List<GraphNode> _adjacencyList = new List<GraphNode>();
+
+        public List<GraphNode> AdjacencyList { get => _adjacencyList; }
 
         public void Init(int[,] map) {
             var openList = new List<GraphNode>();
@@ -49,48 +52,71 @@ namespace lean_pactheman_client {
 
             while (openList.Count > 0) {
                 var currentNode = openList.Pop();
+
                 // check left
-                var adjacentNode = new GraphNode(new Position { X = currentNode.Position.X - 1, Y = currentNode.Position.Y });
+                var adjacentNode = _adjacencyList.FirstOrDefault(n => n.Position == new Position { X = currentNode.Position.X - 1, Y = currentNode.Position.Y });
+                if (adjacentNode == null) adjacentNode = new GraphNode(new Position { X = currentNode.Position.X - 1, Y = currentNode.Position.Y });
                 if (MapReader.Instance.IsValidPosition(adjacentNode.Position)) {
-                    if (openList.All(n => n.Position != adjacentNode.Position)
-                        && AdjacencyList.All(n => n.Position != adjacentNode.Position)) {
-                        adjacentNode.Neighbours.Add(currentNode);
-                        currentNode.Neighbours.Add(adjacentNode);
+                    currentNode.Neighbours.Add(adjacentNode);
+                    if (_adjacencyList.All(n => n.Position != adjacentNode.Position)) { 
                         openList.Add(adjacentNode);
                     }
                 }
                 // check right
-                adjacentNode = new GraphNode(new Position { X = currentNode.Position.X + 1, Y = currentNode.Position.Y });
+                adjacentNode = _adjacencyList.FirstOrDefault(n => n.Position == new Position { X = currentNode.Position.X + 1, Y = currentNode.Position.Y });
+                if (adjacentNode == null) adjacentNode = new GraphNode(new Position { X = currentNode.Position.X + 1, Y = currentNode.Position.Y });
                 if (MapReader.Instance.IsValidPosition(adjacentNode.Position)) {
-                    if (openList.All(n => n.Position != adjacentNode.Position)
-                        && AdjacencyList.All(n => n.Position != adjacentNode.Position)) {
-                        adjacentNode.Neighbours.Add(currentNode);
-                        currentNode.Neighbours.Add(adjacentNode);
-                        openList.Add(adjacentNode);
+                    currentNode.Neighbours.Add(adjacentNode); 
+                    if (_adjacencyList.All(n => n.Position != adjacentNode.Position)) {
+                        openList.Add(adjacentNode); 
                     }
                 }
                 // check up
-                adjacentNode = new GraphNode(new Position { X = currentNode.Position.X, Y = currentNode.Position.Y + 1 });
+                adjacentNode = _adjacencyList.FirstOrDefault(n => n.Position == new Position { X = currentNode.Position.X, Y = currentNode.Position.Y + 1 });
+                if (adjacentNode == null) adjacentNode = new GraphNode(new Position { X = currentNode.Position.X, Y = currentNode.Position.Y + 1 });
                 if (MapReader.Instance.IsValidPosition(adjacentNode.Position)) {
-                    if (openList.All(n => n.Position != adjacentNode.Position)
-                        && AdjacencyList.All(n => n.Position != adjacentNode.Position)) {
-                        adjacentNode.Neighbours.Add(currentNode);
-                        currentNode.Neighbours.Add(adjacentNode);
+                    currentNode.Neighbours.Add(adjacentNode);
+                    if (_adjacencyList.All(n => n.Position != adjacentNode.Position)) { 
                         openList.Add(adjacentNode);
                     }
                 }
                 // check down
-                adjacentNode = new GraphNode(new Position { X = currentNode.Position.X, Y = currentNode.Position.Y - 1 });
+                adjacentNode = _adjacencyList.FirstOrDefault(n => n.Position == new Position { X = currentNode.Position.X, Y = currentNode.Position.Y - 1 });
+                if (adjacentNode == null) adjacentNode = new GraphNode(new Position { X = currentNode.Position.X, Y = currentNode.Position.Y - 1 });
                 if (MapReader.Instance.IsValidPosition(adjacentNode.Position)) {
-                    if (openList.All(n => n.Position != adjacentNode.Position)
-                        && AdjacencyList.All(n => n.Position != adjacentNode.Position)) {
-                        adjacentNode.Neighbours.Add(currentNode);
-                        currentNode.Neighbours.Add(adjacentNode);
+                    currentNode.Neighbours.Add(adjacentNode);
+                    if (_adjacencyList.All(n => n.Position != adjacentNode.Position)) { 
                         openList.Add(adjacentNode);
                     }
                 }
-                if (currentNode.Neighbours.Count > 0) AdjacencyList.Add(currentNode);
+                if (currentNode.Neighbours.Count > 0) _adjacencyList.Add(currentNode);
             }
+        }
+
+        public void Reset() {
+            foreach (var n in _adjacencyList) {
+                n.Visited = false;
+            }
+        }
+
+        public void Print() {
+            foreach (var node in _adjacencyList) {
+                Console.Write("node Position: ");
+                node.Position.Print();
+                Console.WriteLine("neighbour Positions: ");
+                foreach (var neighbour in node.Neighbours) {
+                    neighbour.Position.Print();
+                }
+                Console.WriteLine("---------------------------------");
+            }
+        }
+
+        public int[,] ToTwoDimArr() {
+            int[,] res = new int[19, 22];
+            foreach (var node in _adjacencyList) {
+                res[(int)node.Position.X, (int)node.Position.Y] = node.Neighbours.Count;
+            }
+            return res;
         }
     }
 }

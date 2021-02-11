@@ -23,34 +23,68 @@ namespace lean_pactheman_client {
                 fleeMemory.Clear();
             };
         }
+
+        Position GetAlternativeFromBFS(Position currentPos, List<Position> positionsToAvoid) {
+            
+            var rootNode = MapGraph.Instance.AdjacencyList.FirstOrDefault(n => n.Position == currentPos);
+
+            if (rootNode == null) return currentPos;
+
+            var queue = new Queue<GraphNode>();
+            rootNode.Visited = true;
+            queue.Enqueue(rootNode);
+
+            while (queue.Count > 0) {
+                var currentNode = queue.Dequeue();
+                if (positionsToAvoid.Contains(currentNode.Position)) {
+                    continue;
+                } else if (GameState.Instance.ScorePointState.ScorePointPositions.Any(sp => sp.Downscaled() == currentNode.Position)) {
+                    MapGraph.Instance.Reset();
+                    return currentNode.Position.Copy();
+                }
+                foreach (var neighbour in currentNode.Neighbours) {
+                    if (!neighbour.Visited) {
+                        neighbour.Visited = true;
+                        queue.Enqueue(neighbour);
+                    }
+                }
+            }
+
+            MapGraph.Instance.Reset();
+            return currentPos;
+
+        }
+
         public Velocity PerformMove(PlayerInfo playerInfo) {
             Position target = lastTarget;
             var ghostTooClose = GameState.Instance.GhostPositions
                 .FirstOrDefault(pair => pair.Value.ManhattanDistance(playerInfo.Position) < 192).Value;
             if (ghostTooClose != null) {
                 if (targetMemory.Count > 0) targetMemory.Clear();
-                Console.WriteLine($"Ghost is too close; dist: {ghostTooClose.ManhattanDistance(playerInfo.Position)}");
+                //Console.WriteLine($"Ghost is too close; dist: {ghostTooClose.ManhattanDistance(playerInfo.Position)}");
                 if (fleeMemory.Count == 0) {
 
                     target = null;
-                    Console.WriteLine("Calculating flee path");
-                    var fleeDirection = playerInfo.Position.Copy().SubOther(ghostTooClose).Normalize();
-                    fleeDirection.Multiply(playerInfo.MovementSpeed).Multiply(Constants.FRAME_DELTA_APPROX * 3);
-                    var fleePosition = playerInfo.Position.Copy().AddOther(fleeDirection);
 
-                    // get a region around flee position
-                    var possibleFleePoints = ((Tuple<Position, int>[,])MapReader.Instance.Map.GetRegion(fleePosition.Downscaled(), regionSize: 3))
-                        .Where(t => t.Item2 == 0).Select(t => t.Item1).ToList();
+                    Console.WriteLine("getting alternative score point");
+                    // get alternative score point position via BFS
+                    var alternativeScorePointPos = GetAlternativeFromBFS(
+                        playerInfo.DownScaledPosition,
+                        GameState.Instance.GhostPositions.Select(g => g.Value.Downscaled()).ToList()
+                    );
 
-                    // search a path to a random flee point via A*
+                    Console.Write("Found alternative score point pos: ");
+                    alternativeScorePointPos.Print();
+
+                    // search a path to a flee point via A*
                     fleeMemory = AStar.GetPath(playerInfo.DownScaledPosition,
-                        possibleFleePoints[new Random().Next(possibleFleePoints.Count)],
-                        iterDepth: 5,
-                        positionsToIgnore: GameState.Instance.GhostPositions.Select(g => g.Value.Downscaled()).ToList()) ?? new List<Position>();
+                        alternativeScorePointPos,
+                        iterDepth: 10);
+                        /* positionsToIgnore: GameState.Instance.GhostPositions.Select(g => g.Value.Downscaled()).ToList()) ?? new List<Position>(); */
                 }
                 if (target == null || target.IsEqualUpToRange(playerInfo.Position, 5f)) {
                     try {
-                        Console.WriteLine("Getting new flee target");
+                        Console.WriteLine("setting new flee target");
                         target = fleeMemory.Pop().Multiply(64);
                         lastTarget = target?.Add(32);
                     } catch {
