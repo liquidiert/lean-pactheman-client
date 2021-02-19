@@ -58,7 +58,7 @@ namespace lean_pactheman_client {
         public Velocity PerformMove(PlayerInfo playerInfo) {
             Position target = lastTarget;
             var ghostTooClose = GameState.Instance.GhostPositions
-                .FirstOrDefault(pair => pair.Value.ManhattanDistance(playerInfo.Position) < 192).Value;
+                .FirstOrDefault(pair => pair.Value.ManhattanDistance(playerInfo.Position) < 186).Value;
             if (ghostTooClose != null) {
                 if (targetMemory.Count > 0) targetMemory.Clear();
                 //Console.WriteLine($"Ghost is too close; dist: {ghostTooClose.ManhattanDistance(playerInfo.Position)}");
