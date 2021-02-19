@@ -20,7 +20,7 @@ namespace lean_pactheman_client {
         public static void SetResetCounter(float counter) {
             RESET_COUNTER = counter;
         }
-        
+
         static async Task Main(string[] args) {
             await Task.Run(() => MapGraph.Instance.Init(MapReader.Instance.Map));
             CommandLine.Parser.Default.ParseArguments<Options>(args)
