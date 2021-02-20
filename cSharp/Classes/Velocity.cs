@@ -13,7 +13,10 @@ namespace lean_pactheman_client {
             this.X = pos.X;
             this.Y = pos.Y;
         }
-
+        public Velocity(float single) {
+            this.X = single;
+            this.Y = single;
+        }
         public Velocity(float x, float y) {
             this.X = x;
             this.Y = y;

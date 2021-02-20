@@ -51,6 +51,10 @@ namespace lean_pactheman_client {
         public Player(string name) {
             Name = name;
             _moveAdapter = new MoveAdapter();
+            GameState.Instance.ResetEvent += (object sender, EventArgs args) => {
+                Position = StartPosition;
+                Console.WriteLine(Position);
+            };
         }
 
         private Position UpdatePosition(float x = 0, int xFactor = 1, float y = 0, int yFactor = 1) {
@@ -170,7 +174,11 @@ namespace lean_pactheman_client {
 
             Velocity updateVelocity;
 
-            updateVelocity = _moveAdapter.GetMove(new PlayerInfo(this));
+            try {
+                updateVelocity = _moveAdapter.GetMove(new PlayerInfo(this));
+            } catch (ArgumentOutOfRangeException) {
+                updateVelocity = new Velocity(0);
+            }
 
             Position updatedPosition = Position.Copy().AddOther(
                 updateVelocity.Multiply(MovementSpeed).Multiply(Constants.FRAME_DELTA_APPROX).ToPosition()

@@ -10,11 +10,12 @@ namespace lean_pactheman_client {
 
         [BindRecord(typeof(BebopRecord<ErrorMsg>))]
         public static void HandleErrorMsg(object client, ErrorMsg msg) {
-            //HumanPlayer player = (HumanPlayer) client;
+
+            Console.Write($"Received {msg.ErrorMessage} violation. ");
+            GameState.Instance.SignalStrike();
+            Console.Write($"Watch out this is your {GameState.Instance.StrikeCount} strike. ");
+            Console.WriteLine($"Only {Constants.MAX_STRIKE_COUNT - GameState.Instance.StrikeCount} strike(s) left.");
             
-            Console.WriteLine($"received error {msg.ErrorMessage} {new DateTimeOffset(DateTime.Now).ToUnixTimeMilliseconds()}");
-            
-            // TODO: handle specific errors
         }
     }
 }
