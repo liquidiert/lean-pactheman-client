@@ -125,5 +125,9 @@ namespace PacTheMan.Models {
             return new Position { X = (float)Math.Floor(pos.X / 64), Y = (float)Math.Floor(pos.Y / 64) };
         }
 
+        public static Position Upscaled(this Position pos) {
+            return new Position { X = pos.X * 64, Y = pos.Y * 64 };
+        }
+
     }
 }

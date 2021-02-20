@@ -18,9 +18,13 @@ namespace lean_pactheman_client {
                     .AddOrUpdate(clientId, id => msg.Lives[clientId], (id, live) => msg.Lives[clientId]);
                 GameState.Instance.PlayerState.Scores
                     .AddOrUpdate(clientId, id => msg.Scores[clientId], (id, score) => msg.Scores[clientId]);
-                GameState.Instance.ScorePointState.ScorePointPositions = 
-                    new ConcurrentBag<Position>(GameState.Instance.ScorePointState.ScorePointPositions
-                        .Intersect(msg.ScorePositions.Select(p => (Position)p)));
+                if (GameState.Instance.ScorePointState.ScorePointPositions.Count != 0) {
+                    GameState.Instance.ScorePointState.ScorePointPositions = 
+                        new ConcurrentBag<Position>(GameState.Instance.ScorePointState.ScorePointPositions
+                            .Intersect(msg.ScorePositions.Select(p => (Position)p)));
+                } else {
+                    GameState.Instance.ScorePointState.ScorePointPositions = new ConcurrentBag<Position>(msg.ScorePositions.Select(p => (Position)p));
+                }
                 if (clientId != player.Session.ClientId) {
                     var oppPos = (Position)msg.PlayerPositions[clientId];
                     if (oppPos.X > 70 && oppPos.X < 1145) {

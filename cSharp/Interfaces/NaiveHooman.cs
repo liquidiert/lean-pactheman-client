@@ -59,7 +59,7 @@ namespace lean_pactheman_client {
             Position target = lastTarget;
             // TODO: evade ghost region
             var ghostTooClose = GameState.Instance.GhostPositions
-                .FirstOrDefault(pair => pair.Value.ManhattanDistance(playerInfo.Position) < 186).Value;
+                .FirstOrDefault(pair => pair.Value.ManhattanDistance(playerInfo.Position) < 192).Value;
             if (ghostTooClose != null) {
                 if (targetMemory.Count > 0) targetMemory.Clear();
                 
@@ -80,16 +80,17 @@ namespace lean_pactheman_client {
                     // search a path to a flee point via A*
                     fleeMemory = AStar.GetPath(playerInfo.DownScaledPosition,
                         alternativeScorePointPos,
-                        iterDepth: 10);
+                        iterDepth: 7);
                         /* positionsToIgnore: GameState.Instance.GhostPositions.Select(g => g.Value.Downscaled()).ToList()) ?? new List<Position>(); */
                 }
                 if (target == null || target.IsEqualUpToRange(playerInfo.Position, 5f)) {
                     try {
-                        Console.WriteLine("setting new flee target");
                         target = fleeMemory.Pop().Multiply(64);
                         lastTarget = target?.Add(32);
+                        Console.WriteLine("setting new flee target");
                     } catch {
                         Console.WriteLine("no flee target was found");
+                        return new Velocity(playerInfo.Position.Copy().SubOther(ghostTooClose));
                     }
                 }
             } else { // no ghosts detected
@@ -111,7 +112,7 @@ namespace lean_pactheman_client {
                         targetMemory = AStar.GetPath(
                             playerInfo.DownScaledPosition,
                             possibleTargets[0].Pos.Downscaled(),
-                            iterDepth: 15,
+                            iterDepth: 12,
                             positionsToIgnore: GameState.Instance.GhostPositions.Select(g => g.Value.Downscaled()).ToList()
                         );
                         target = targetMemory.Pop().Multiply(64);

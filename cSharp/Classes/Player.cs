@@ -53,7 +53,6 @@ namespace lean_pactheman_client {
             _moveAdapter = new MoveAdapter();
             GameState.Instance.ResetEvent += (object sender, EventArgs args) => {
                 Position = StartPosition;
-                Console.WriteLine(Position);
             };
         }
 
