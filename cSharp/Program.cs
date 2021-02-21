@@ -17,17 +17,58 @@ namespace lean_pactheman_client {
         static Player player;
         static float RESET_COUNTER = 0f;
         public static EventWaitHandle WaitHandle = new AutoResetEvent(false);
+        static Options options;
+        static GameDataSaver saver;
         
         public static void SetResetCounter(float counter) {
             RESET_COUNTER = counter;
         }
 
         static async Task Main(string[] args) {
-            await Task.Run(() => MapGraph.Instance.Init(MapReader.Instance.Map));
-            CommandLine.Parser.Default.ParseArguments<Options>(args)
-                .WithParsed(CreatePlayer)
-                .WithNotParsed(HandleParseError);
 
+            await Task.Run(() => MapGraph.Instance.Init(MapReader.Instance.Map));
+            options = CommandLine.Parser.Default.ParseArguments<Options>(args).MapResult((opts) => opts, (errs) => HandleParseError(errs));
+
+            if (options == null) {
+                Console.WriteLine("Couldn't parse arguments");
+                Environment.Exit(-1);
+            }
+
+            // initialization
+            IPAddress ipAddress;
+            // parse ip
+            if (!IPAddress.TryParse(options.Ip, out ipAddress)) {
+                Console.WriteLine("Error: invalid ip address");
+            }
+
+            GameState.Instance.Init();
+
+            player = new Player(options.PlayerName);
+            await player.Connect(ipAddress, options.Port);
+
+            if (!options.Host) {
+                Console.WriteLine("Enter session id:");
+                var sessionId = Console.ReadLine();
+                GameState.Instance.Session = new SessionMsg {
+                    SessionId = sessionId
+                };
+                await player.Join();
+            } else {
+                await player.Host();
+            }
+
+            if (options.LogGameData) {
+                // use dispose pattern if logging gamedata
+                using (saver = new GameDataSaver()) {
+                    await GameLoop();
+                }
+            } else {
+                await GameLoop();
+            }
+
+        }
+
+        static async Task GameLoop() {
             // await init state
             WaitHandle.WaitOne();
 
@@ -44,31 +85,9 @@ namespace lean_pactheman_client {
             }
         }
 
-        static async void CreatePlayer(Options opts) {
-            IPAddress ipAddress;
-            // parse ip
-            if (!IPAddress.TryParse(opts.Ip, out ipAddress)) {
-                Console.WriteLine("Error: invalid ip address");
-            }
-
-            GameState.Instance.Init();
-
-            player = new Player(opts.PlayerName);
-            await player.Connect(ipAddress, opts.Port);
-
-            if (!opts.Host) {
-                Console.WriteLine("Enter session id:");
-                var sessionId = Console.ReadLine();
-                player.Session = new SessionMsg {
-                    SessionId = sessionId
-                };
-                await player.Join();
-            } else {
-                await player.Host();
-            }
-
+        static Options HandleParseError(IEnumerable<Error> errs) {
+            return null;
         }
-        static void HandleParseError(IEnumerable<Error> errs) {}
 
     }
 }

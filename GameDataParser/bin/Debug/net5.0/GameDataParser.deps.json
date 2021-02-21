@@ -1,0 +1,50 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v5.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v5.0": {
+      "GameDataParser/1.0.0": {
+        "dependencies": {
+          "bebop": "2.1.0",
+          "bebop-tools": "2.1.0"
+        },
+        "runtime": {
+          "GameDataParser.dll": {}
+        }
+      },
+      "bebop/2.1.0": {
+        "runtime": {
+          "lib/net5.0/Bebop.dll": {
+            "assemblyVersion": "2.1.0.0",
+            "fileVersion": "2.1.0.0"
+          }
+        }
+      },
+      "bebop-tools/2.1.0": {}
+    }
+  },
+  "libraries": {
+    "GameDataParser/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "bebop/2.1.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-+dgOtE1607sBDkRvEtpYDTOCYAuIoIZYD7KkNNjS1GIpyUPkqslOk7CaFeIA9xHtQRPB+M+gWeEqzuhHUnUqVw==",
+      "path": "bebop/2.1.0",
+      "hashPath": "bebop.2.1.0.nupkg.sha512"
+    },
+    "bebop-tools/2.1.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-L6MfHp5wkkqBspxltrSMqy3zgKRoHzasQrXA7DL38wBcB10auCnT9TKH+8x94LufrfjFuH+0Q6CVjNbOpqABRA==",
+      "path": "bebop-tools/2.1.0",
+      "hashPath": "bebop-tools.2.1.0.nupkg.sha512"
+    }
+  }
+}

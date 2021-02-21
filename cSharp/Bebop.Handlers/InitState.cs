@@ -29,7 +29,7 @@ namespace lean_pactheman_client {
                     .AddOrUpdate(ghost.Key, (id) => (Position)ghost.Value, (id, pos) => (Position)ghost.Value);
             }
 
-            player.Position = player.StartPosition = (Position)msg.PlayerInitPositions[player.Session.ClientId ?? Guid.NewGuid()];
+            player.Position = player.StartPosition = (Position)msg.PlayerInitPositions[GameState.Instance.Session.ClientId ?? Guid.NewGuid()];
             foreach (var pos in msg.PlayerInitPositions) {
                 GameState.Instance.PlayerState.PlayerPositions.AddOrUpdate(pos.Key, (id) => (Position)pos.Value, (id, p) => (Position)pos.Value);
             }

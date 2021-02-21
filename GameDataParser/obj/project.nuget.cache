@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "8pcAtMaYIaVqJyEb5ToFbyngXj8ntkx+ArP4zmFBVEZUAMWgENKZA2Idqtismp21oFqc71D5ioZQWxfsrysx8g==",
+  "success": true,
+  "projectFilePath": "/home/secretone/git_repos/uni/lean-pactheman-client/GameDataParser/GameDataParser.csproj",
+  "expectedPackageFiles": [
+    "/home/secretone/.nuget/packages/bebop/2.1.0/bebop.2.1.0.nupkg.sha512",
+    "/home/secretone/.nuget/packages/bebop-tools/2.1.0/bebop-tools.2.1.0.nupkg.sha512"
+  ],
+  "logs": []
+}

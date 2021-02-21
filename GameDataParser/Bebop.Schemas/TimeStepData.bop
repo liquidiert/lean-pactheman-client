@@ -1,0 +1,5 @@
+message TimeStepData {
+    1 -> float64 timestamp;
+    2 -> PlayerState playerState;
+    3 -> map[string, Position] ghostPositions;
+}
