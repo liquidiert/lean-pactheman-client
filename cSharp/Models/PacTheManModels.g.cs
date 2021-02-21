@@ -19,6 +19,188 @@ using global::Bebop.Exceptions;
 namespace PacTheMan.Models {
   [System.CodeDom.Compiler.GeneratedCode("bebopc", "2.1.0")]
   [BebopRecord(BebopKind.Struct)]
+  public abstract class BaseGameData : System.IEquatable<BaseGameData> {
+    [System.Diagnostics.CodeAnalysis.NotNull, System.Diagnostics.CodeAnalysis.DisallowNull]
+    public BaseLevelData[] LevelData { get; set; }
+
+    public bool Equals(BaseGameData other) {
+      if (ReferenceEquals(null, other)) {
+        return false;
+      }
+      if (ReferenceEquals(this, other)) {
+        return true;
+      }
+      return (LevelData is null ? other.LevelData is null : other.LevelData is not null && LevelData.SequenceEqual(other.LevelData));
+    }
+
+    public override bool Equals(object obj) {
+      if (ReferenceEquals(null, obj)) {
+        return false;
+      }
+      if (ReferenceEquals(this, obj)) {
+        return true;
+      }
+      if (obj is not BaseGameData baseType) {
+        return false;
+      }
+      return Equals(baseType);
+    }
+
+    public override int GetHashCode() {
+      int hash = 1;
+      hash ^= LevelData.GetHashCode();
+      return hash;
+    }
+
+    public static bool operator ==(BaseGameData left, BaseGameData right) => Equals(left, right);
+    public static bool operator !=(BaseGameData left, BaseGameData  right) => !Equals(left, right);
+
+  }
+
+  /// <inheritdoc />
+  [System.CodeDom.Compiler.GeneratedCode("bebopc", "2.1.0")]
+  [BebopRecord(BebopKind.Struct)]
+  public sealed class GameData : BaseGameData {
+
+    [System.Runtime.CompilerServices.MethodImpl(BebopConstants.HotPath)]
+    public static byte[] Encode(BaseGameData record) {
+      var writer = BebopWriter.Create();
+      EncodeInto(record, ref writer);
+      return writer.ToArray();
+    }
+
+    [System.Runtime.CompilerServices.MethodImpl(BebopConstants.HotPath)]
+    public byte[] Encode() {
+      var writer = BebopWriter.Create();
+      EncodeInto(this, ref writer);
+      return writer.ToArray();
+    }
+
+    [System.Runtime.CompilerServices.MethodImpl(BebopConstants.HotPath)]
+    public static ImmutableArray<byte> EncodeAsImmutable(BaseGameData record) {
+      var writer = BebopWriter.Create();
+      EncodeInto(record, ref writer);
+      return writer.ToImmutableArray();
+    }
+
+    [System.Runtime.CompilerServices.MethodImpl(BebopConstants.HotPath)]
+    public ImmutableArray<byte> EncodeAsImmutable() {
+      var writer = BebopWriter.Create();
+      EncodeInto(this, ref writer);
+      return writer.ToImmutableArray();
+    }
+
+    [System.Runtime.CompilerServices.MethodImpl(BebopConstants.HotPath)]
+    internal static void EncodeInto(BaseGameData record, ref BebopWriter writer) {
+      {
+        var length0 = unchecked((uint)record.LevelData.Length);
+        writer.WriteUInt32(length0);
+        for (var i0 = 0; i0 < length0; i0++) {
+          PacTheMan.Models.LevelData.EncodeInto(record.LevelData[i0], ref writer);
+        }
+      }
+    }
+
+    [System.Runtime.CompilerServices.MethodImpl(BebopConstants.HotPath)]
+    public static T DecodeAs<T>(byte[] record) where T : BaseGameData, new() {
+      var reader = BebopReader.From(record);
+      return DecodeFrom<T>(ref reader);
+    }
+
+    [System.Runtime.CompilerServices.MethodImpl(BebopConstants.HotPath)]
+    public static GameData Decode(byte[] record) {
+      var reader = BebopReader.From(record);
+      return DecodeFrom(ref reader);
+    }
+
+    [System.Runtime.CompilerServices.MethodImpl(BebopConstants.HotPath)]
+    public static T DecodeAs<T>(System.ReadOnlySpan<byte> record) where T : BaseGameData, new() {
+      var reader = BebopReader.From(record);
+      return DecodeFrom<T>(ref reader);
+    }
+
+    [System.Runtime.CompilerServices.MethodImpl(BebopConstants.HotPath)]
+    public static GameData Decode(System.ReadOnlySpan<byte> record) {
+      var reader = BebopReader.From(record);
+      return DecodeFrom(ref reader);
+    }
+
+    [System.Runtime.CompilerServices.MethodImpl(BebopConstants.HotPath)]
+    public static T DecodeAs<T>(System.ReadOnlyMemory<byte> record) where T : BaseGameData, new() {
+      var reader = BebopReader.From(record);
+      return DecodeFrom<T>(ref reader);
+    }
+
+    [System.Runtime.CompilerServices.MethodImpl(BebopConstants.HotPath)]
+    public static GameData Decode(System.ReadOnlyMemory<byte> record) {
+      var reader = BebopReader.From(record);
+      return DecodeFrom(ref reader);
+    }
+
+    [System.Runtime.CompilerServices.MethodImpl(BebopConstants.HotPath)]
+    public static T DecodeAs<T>(System.ArraySegment<byte> record) where T : BaseGameData, new() {
+      var reader = BebopReader.From(record);
+      return DecodeFrom<T>(ref reader);
+    }
+
+    [System.Runtime.CompilerServices.MethodImpl(BebopConstants.HotPath)]
+    public static GameData Decode(System.ArraySegment<byte> record) {
+      var reader = BebopReader.From(record);
+      return DecodeFrom(ref reader);
+    }
+
+    [System.Runtime.CompilerServices.MethodImpl(BebopConstants.HotPath)]
+    public static T DecodeAs<T>(ImmutableArray<byte> record) where T : BaseGameData, new() {
+      var reader = BebopReader.From(record);
+      return DecodeFrom<T>(ref reader);
+    }
+
+    [System.Runtime.CompilerServices.MethodImpl(BebopConstants.HotPath)]
+    public static GameData Decode(ImmutableArray<byte> record) {
+      var reader = BebopReader.From(record);
+      return DecodeFrom(ref reader);
+    }
+
+
+    [System.Runtime.CompilerServices.MethodImpl(BebopConstants.HotPath)]
+    internal static GameData DecodeFrom(ref BebopReader reader) {
+
+      BaseLevelData[] field0;
+      {
+        var length0 = unchecked((int)reader.ReadUInt32());
+        field0 = new BaseLevelData[length0];
+        for (var i0 = 0; i0 < length0; i0++) {
+          BaseLevelData x0;
+          x0 = PacTheMan.Models.LevelData.DecodeFrom(ref reader);
+          field0[i0] = x0;
+        }
+      }
+      return new GameData {
+        LevelData = field0,
+      };
+    }
+
+    [System.Runtime.CompilerServices.MethodImpl(BebopConstants.HotPath)]
+    internal static T DecodeFrom<T>(ref BebopReader reader) where T: BaseGameData, new() {
+      BaseLevelData[] field0;
+      {
+        var length0 = unchecked((int)reader.ReadUInt32());
+        field0 = new BaseLevelData[length0];
+        for (var i0 = 0; i0 < length0; i0++) {
+          BaseLevelData x0;
+          x0 = PacTheMan.Models.LevelData.DecodeFrom(ref reader);
+          field0[i0] = x0;
+        }
+      }
+      return new T {
+        LevelData = field0,
+      };
+    }
+
+  }
+
+  [System.CodeDom.Compiler.GeneratedCode("bebopc", "2.1.0")]
+  [BebopRecord(BebopKind.Struct)]
   public abstract class BaseGhostAlgorithms : System.IEquatable<BaseGhostAlgorithms> {
     [System.Diagnostics.CodeAnalysis.NotNull, System.Diagnostics.CodeAnalysis.DisallowNull]
     public string Blinky { get; set; }
@@ -826,6 +1008,198 @@ namespace PacTheMan.Models {
         Lives = field3,
         PlayerPositions = field4,
         ScorePositions = field5,
+      };
+    }
+
+  }
+
+  [System.CodeDom.Compiler.GeneratedCode("bebopc", "2.1.0")]
+  [BebopRecord(BebopKind.Struct)]
+  public abstract class BaseLevelData : System.IEquatable<BaseLevelData> {
+    [System.Diagnostics.CodeAnalysis.NotNull, System.Diagnostics.CodeAnalysis.DisallowNull]
+    public BaseTimeStepData[] TimeSteps { get; set; }
+    [System.Diagnostics.CodeAnalysis.NotNull, System.Diagnostics.CodeAnalysis.DisallowNull]
+    public string Winner { get; set; }
+
+    public bool Equals(BaseLevelData other) {
+      if (ReferenceEquals(null, other)) {
+        return false;
+      }
+      if (ReferenceEquals(this, other)) {
+        return true;
+      }
+      return (TimeSteps is null ? other.TimeSteps is null : other.TimeSteps is not null && TimeSteps.SequenceEqual(other.TimeSteps)) && Winner == other.Winner;
+    }
+
+    public override bool Equals(object obj) {
+      if (ReferenceEquals(null, obj)) {
+        return false;
+      }
+      if (ReferenceEquals(this, obj)) {
+        return true;
+      }
+      if (obj is not BaseLevelData baseType) {
+        return false;
+      }
+      return Equals(baseType);
+    }
+
+    public override int GetHashCode() {
+      int hash = 1;
+      hash ^= TimeSteps.GetHashCode();
+      hash ^= Winner.GetHashCode();
+      return hash;
+    }
+
+    public static bool operator ==(BaseLevelData left, BaseLevelData right) => Equals(left, right);
+    public static bool operator !=(BaseLevelData left, BaseLevelData  right) => !Equals(left, right);
+
+  }
+
+  /// <inheritdoc />
+  [System.CodeDom.Compiler.GeneratedCode("bebopc", "2.1.0")]
+  [BebopRecord(BebopKind.Struct)]
+  public sealed class LevelData : BaseLevelData {
+
+    [System.Runtime.CompilerServices.MethodImpl(BebopConstants.HotPath)]
+    public static byte[] Encode(BaseLevelData record) {
+      var writer = BebopWriter.Create();
+      EncodeInto(record, ref writer);
+      return writer.ToArray();
+    }
+
+    [System.Runtime.CompilerServices.MethodImpl(BebopConstants.HotPath)]
+    public byte[] Encode() {
+      var writer = BebopWriter.Create();
+      EncodeInto(this, ref writer);
+      return writer.ToArray();
+    }
+
+    [System.Runtime.CompilerServices.MethodImpl(BebopConstants.HotPath)]
+    public static ImmutableArray<byte> EncodeAsImmutable(BaseLevelData record) {
+      var writer = BebopWriter.Create();
+      EncodeInto(record, ref writer);
+      return writer.ToImmutableArray();
+    }
+
+    [System.Runtime.CompilerServices.MethodImpl(BebopConstants.HotPath)]
+    public ImmutableArray<byte> EncodeAsImmutable() {
+      var writer = BebopWriter.Create();
+      EncodeInto(this, ref writer);
+      return writer.ToImmutableArray();
+    }
+
+    [System.Runtime.CompilerServices.MethodImpl(BebopConstants.HotPath)]
+    internal static void EncodeInto(BaseLevelData record, ref BebopWriter writer) {
+      {
+        var length0 = unchecked((uint)record.TimeSteps.Length);
+        writer.WriteUInt32(length0);
+        for (var i0 = 0; i0 < length0; i0++) {
+          PacTheMan.Models.TimeStepData.EncodeInto(record.TimeSteps[i0], ref writer);
+        }
+      }
+      writer.WriteString(record.Winner);
+    }
+
+    [System.Runtime.CompilerServices.MethodImpl(BebopConstants.HotPath)]
+    public static T DecodeAs<T>(byte[] record) where T : BaseLevelData, new() {
+      var reader = BebopReader.From(record);
+      return DecodeFrom<T>(ref reader);
+    }
+
+    [System.Runtime.CompilerServices.MethodImpl(BebopConstants.HotPath)]
+    public static LevelData Decode(byte[] record) {
+      var reader = BebopReader.From(record);
+      return DecodeFrom(ref reader);
+    }
+
+    [System.Runtime.CompilerServices.MethodImpl(BebopConstants.HotPath)]
+    public static T DecodeAs<T>(System.ReadOnlySpan<byte> record) where T : BaseLevelData, new() {
+      var reader = BebopReader.From(record);
+      return DecodeFrom<T>(ref reader);
+    }
+
+    [System.Runtime.CompilerServices.MethodImpl(BebopConstants.HotPath)]
+    public static LevelData Decode(System.ReadOnlySpan<byte> record) {
+      var reader = BebopReader.From(record);
+      return DecodeFrom(ref reader);
+    }
+
+    [System.Runtime.CompilerServices.MethodImpl(BebopConstants.HotPath)]
+    public static T DecodeAs<T>(System.ReadOnlyMemory<byte> record) where T : BaseLevelData, new() {
+      var reader = BebopReader.From(record);
+      return DecodeFrom<T>(ref reader);
+    }
+
+    [System.Runtime.CompilerServices.MethodImpl(BebopConstants.HotPath)]
+    public static LevelData Decode(System.ReadOnlyMemory<byte> record) {
+      var reader = BebopReader.From(record);
+      return DecodeFrom(ref reader);
+    }
+
+    [System.Runtime.CompilerServices.MethodImpl(BebopConstants.HotPath)]
+    public static T DecodeAs<T>(System.ArraySegment<byte> record) where T : BaseLevelData, new() {
+      var reader = BebopReader.From(record);
+      return DecodeFrom<T>(ref reader);
+    }
+
+    [System.Runtime.CompilerServices.MethodImpl(BebopConstants.HotPath)]
+    public static LevelData Decode(System.ArraySegment<byte> record) {
+      var reader = BebopReader.From(record);
+      return DecodeFrom(ref reader);
+    }
+
+    [System.Runtime.CompilerServices.MethodImpl(BebopConstants.HotPath)]
+    public static T DecodeAs<T>(ImmutableArray<byte> record) where T : BaseLevelData, new() {
+      var reader = BebopReader.From(record);
+      return DecodeFrom<T>(ref reader);
+    }
+
+    [System.Runtime.CompilerServices.MethodImpl(BebopConstants.HotPath)]
+    public static LevelData Decode(ImmutableArray<byte> record) {
+      var reader = BebopReader.From(record);
+      return DecodeFrom(ref reader);
+    }
+
+
+    [System.Runtime.CompilerServices.MethodImpl(BebopConstants.HotPath)]
+    internal static LevelData DecodeFrom(ref BebopReader reader) {
+
+      BaseTimeStepData[] field0;
+      {
+        var length0 = unchecked((int)reader.ReadUInt32());
+        field0 = new BaseTimeStepData[length0];
+        for (var i0 = 0; i0 < length0; i0++) {
+          BaseTimeStepData x0;
+          x0 = PacTheMan.Models.TimeStepData.DecodeFrom(ref reader);
+          field0[i0] = x0;
+        }
+      }
+      string field1;
+      field1 = reader.ReadString();
+      return new LevelData {
+        TimeSteps = field0,
+        Winner = field1,
+      };
+    }
+
+    [System.Runtime.CompilerServices.MethodImpl(BebopConstants.HotPath)]
+    internal static T DecodeFrom<T>(ref BebopReader reader) where T: BaseLevelData, new() {
+      BaseTimeStepData[] field0;
+      {
+        var length0 = unchecked((int)reader.ReadUInt32());
+        field0 = new BaseTimeStepData[length0];
+        for (var i0 = 0; i0 < length0; i0++) {
+          BaseTimeStepData x0;
+          x0 = PacTheMan.Models.TimeStepData.DecodeFrom(ref reader);
+          field0[i0] = x0;
+        }
+      }
+      string field1;
+      field1 = reader.ReadString();
+      return new T {
+        TimeSteps = field0,
+        Winner = field1,
       };
     }
 
@@ -3375,6 +3749,186 @@ namespace PacTheMan.Models {
             return record;
         }
       }
+    }
+
+  }
+
+  [System.CodeDom.Compiler.GeneratedCode("bebopc", "2.1.0")]
+  [BebopRecord(BebopKind.Struct)]
+  public abstract class BaseTimeStepData : System.IEquatable<BaseTimeStepData> {
+    [System.Diagnostics.CodeAnalysis.NotNull, System.Diagnostics.CodeAnalysis.DisallowNull]
+    public double Timestep { get; set; }
+    [System.Diagnostics.CodeAnalysis.NotNull, System.Diagnostics.CodeAnalysis.DisallowNull]
+    public BasePlayerState PlayerState { get; set; }
+    [System.Diagnostics.CodeAnalysis.NotNull, System.Diagnostics.CodeAnalysis.DisallowNull]
+    public BaseGhostMoveMsg GhostPositions { get; set; }
+
+    public bool Equals(BaseTimeStepData other) {
+      if (ReferenceEquals(null, other)) {
+        return false;
+      }
+      if (ReferenceEquals(this, other)) {
+        return true;
+      }
+      return Timestep == other.Timestep && PlayerState == other.PlayerState && GhostPositions == other.GhostPositions;
+    }
+
+    public override bool Equals(object obj) {
+      if (ReferenceEquals(null, obj)) {
+        return false;
+      }
+      if (ReferenceEquals(this, obj)) {
+        return true;
+      }
+      if (obj is not BaseTimeStepData baseType) {
+        return false;
+      }
+      return Equals(baseType);
+    }
+
+    public override int GetHashCode() {
+      int hash = 1;
+      hash ^= Timestep.GetHashCode();
+      hash ^= PlayerState.GetHashCode();
+      hash ^= GhostPositions.GetHashCode();
+      return hash;
+    }
+
+    public static bool operator ==(BaseTimeStepData left, BaseTimeStepData right) => Equals(left, right);
+    public static bool operator !=(BaseTimeStepData left, BaseTimeStepData  right) => !Equals(left, right);
+
+  }
+
+  /// <inheritdoc />
+  [System.CodeDom.Compiler.GeneratedCode("bebopc", "2.1.0")]
+  [BebopRecord(BebopKind.Struct)]
+  public sealed class TimeStepData : BaseTimeStepData {
+
+    [System.Runtime.CompilerServices.MethodImpl(BebopConstants.HotPath)]
+    public static byte[] Encode(BaseTimeStepData record) {
+      var writer = BebopWriter.Create();
+      EncodeInto(record, ref writer);
+      return writer.ToArray();
+    }
+
+    [System.Runtime.CompilerServices.MethodImpl(BebopConstants.HotPath)]
+    public byte[] Encode() {
+      var writer = BebopWriter.Create();
+      EncodeInto(this, ref writer);
+      return writer.ToArray();
+    }
+
+    [System.Runtime.CompilerServices.MethodImpl(BebopConstants.HotPath)]
+    public static ImmutableArray<byte> EncodeAsImmutable(BaseTimeStepData record) {
+      var writer = BebopWriter.Create();
+      EncodeInto(record, ref writer);
+      return writer.ToImmutableArray();
+    }
+
+    [System.Runtime.CompilerServices.MethodImpl(BebopConstants.HotPath)]
+    public ImmutableArray<byte> EncodeAsImmutable() {
+      var writer = BebopWriter.Create();
+      EncodeInto(this, ref writer);
+      return writer.ToImmutableArray();
+    }
+
+    [System.Runtime.CompilerServices.MethodImpl(BebopConstants.HotPath)]
+    internal static void EncodeInto(BaseTimeStepData record, ref BebopWriter writer) {
+      writer.WriteFloat64(record.Timestep);
+      PacTheMan.Models.PlayerState.EncodeInto(record.PlayerState, ref writer);
+      PacTheMan.Models.GhostMoveMsg.EncodeInto(record.GhostPositions, ref writer);
+    }
+
+    [System.Runtime.CompilerServices.MethodImpl(BebopConstants.HotPath)]
+    public static T DecodeAs<T>(byte[] record) where T : BaseTimeStepData, new() {
+      var reader = BebopReader.From(record);
+      return DecodeFrom<T>(ref reader);
+    }
+
+    [System.Runtime.CompilerServices.MethodImpl(BebopConstants.HotPath)]
+    public static TimeStepData Decode(byte[] record) {
+      var reader = BebopReader.From(record);
+      return DecodeFrom(ref reader);
+    }
+
+    [System.Runtime.CompilerServices.MethodImpl(BebopConstants.HotPath)]
+    public static T DecodeAs<T>(System.ReadOnlySpan<byte> record) where T : BaseTimeStepData, new() {
+      var reader = BebopReader.From(record);
+      return DecodeFrom<T>(ref reader);
+    }
+
+    [System.Runtime.CompilerServices.MethodImpl(BebopConstants.HotPath)]
+    public static TimeStepData Decode(System.ReadOnlySpan<byte> record) {
+      var reader = BebopReader.From(record);
+      return DecodeFrom(ref reader);
+    }
+
+    [System.Runtime.CompilerServices.MethodImpl(BebopConstants.HotPath)]
+    public static T DecodeAs<T>(System.ReadOnlyMemory<byte> record) where T : BaseTimeStepData, new() {
+      var reader = BebopReader.From(record);
+      return DecodeFrom<T>(ref reader);
+    }
+
+    [System.Runtime.CompilerServices.MethodImpl(BebopConstants.HotPath)]
+    public static TimeStepData Decode(System.ReadOnlyMemory<byte> record) {
+      var reader = BebopReader.From(record);
+      return DecodeFrom(ref reader);
+    }
+
+    [System.Runtime.CompilerServices.MethodImpl(BebopConstants.HotPath)]
+    public static T DecodeAs<T>(System.ArraySegment<byte> record) where T : BaseTimeStepData, new() {
+      var reader = BebopReader.From(record);
+      return DecodeFrom<T>(ref reader);
+    }
+
+    [System.Runtime.CompilerServices.MethodImpl(BebopConstants.HotPath)]
+    public static TimeStepData Decode(System.ArraySegment<byte> record) {
+      var reader = BebopReader.From(record);
+      return DecodeFrom(ref reader);
+    }
+
+    [System.Runtime.CompilerServices.MethodImpl(BebopConstants.HotPath)]
+    public static T DecodeAs<T>(ImmutableArray<byte> record) where T : BaseTimeStepData, new() {
+      var reader = BebopReader.From(record);
+      return DecodeFrom<T>(ref reader);
+    }
+
+    [System.Runtime.CompilerServices.MethodImpl(BebopConstants.HotPath)]
+    public static TimeStepData Decode(ImmutableArray<byte> record) {
+      var reader = BebopReader.From(record);
+      return DecodeFrom(ref reader);
+    }
+
+
+    [System.Runtime.CompilerServices.MethodImpl(BebopConstants.HotPath)]
+    internal static TimeStepData DecodeFrom(ref BebopReader reader) {
+
+      double field0;
+      field0 = reader.ReadFloat64();
+      BasePlayerState field1;
+      field1 = PacTheMan.Models.PlayerState.DecodeFrom(ref reader);
+      BaseGhostMoveMsg field2;
+      field2 = PacTheMan.Models.GhostMoveMsg.DecodeFrom(ref reader);
+      return new TimeStepData {
+        Timestep = field0,
+        PlayerState = field1,
+        GhostPositions = field2,
+      };
+    }
+
+    [System.Runtime.CompilerServices.MethodImpl(BebopConstants.HotPath)]
+    internal static T DecodeFrom<T>(ref BebopReader reader) where T: BaseTimeStepData, new() {
+      double field0;
+      field0 = reader.ReadFloat64();
+      BasePlayerState field1;
+      field1 = PacTheMan.Models.PlayerState.DecodeFrom(ref reader);
+      BaseGhostMoveMsg field2;
+      field2 = PacTheMan.Models.GhostMoveMsg.DecodeFrom(ref reader);
+      return new T {
+        Timestep = field0,
+        PlayerState = field1,
+        GhostPositions = field2,
+      };
     }
 
   }

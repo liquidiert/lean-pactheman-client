@@ -1,0 +1,5 @@
+struct TimeStepData {
+    float64 timestep;
+    PlayerState playerState;
+    GhostMoveMsg ghostPositions;
+}

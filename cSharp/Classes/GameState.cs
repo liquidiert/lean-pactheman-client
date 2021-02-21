@@ -31,6 +31,11 @@ namespace lean_pactheman_client {
             StrikeEvent?.Invoke(this, new EventArgs());
         }
 
+        public event EventHandler NewLevelEvent;
+        public void SignalNewLevel() {
+            NewLevelEvent?.Invoke(this, new EventArgs());
+        }
+
         // state of the two pactheman players
         public ConcurrentPlayerState PlayerState { get; set; }
         // state of the score points; currently only stores their positions
