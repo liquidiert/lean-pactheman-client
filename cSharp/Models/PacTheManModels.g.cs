@@ -3754,14 +3754,16 @@ namespace PacTheMan.Models {
   }
 
   [System.CodeDom.Compiler.GeneratedCode("bebopc", "2.1.0")]
-  [BebopRecord(BebopKind.Struct)]
+  [BebopRecord(BebopKind.Message)]
   public abstract class BaseTimeStepData : System.IEquatable<BaseTimeStepData> {
-    [System.Diagnostics.CodeAnalysis.NotNull, System.Diagnostics.CodeAnalysis.DisallowNull]
-    public double Timestep { get; set; }
-    [System.Diagnostics.CodeAnalysis.NotNull, System.Diagnostics.CodeAnalysis.DisallowNull]
-    public BasePlayerState PlayerState { get; set; }
-    [System.Diagnostics.CodeAnalysis.NotNull, System.Diagnostics.CodeAnalysis.DisallowNull]
-    public BaseGhostMoveMsg GhostPositions { get; set; }
+    #nullable enable
+    [System.Diagnostics.CodeAnalysis.MaybeNull, System.Diagnostics.CodeAnalysis.AllowNull]
+    public double? Timestamp { get; set; }
+    [System.Diagnostics.CodeAnalysis.MaybeNull, System.Diagnostics.CodeAnalysis.AllowNull]
+    public BasePlayerState? PlayerState { get; set; }
+    [System.Diagnostics.CodeAnalysis.MaybeNull, System.Diagnostics.CodeAnalysis.AllowNull]
+    public System.Collections.Generic.Dictionary<string, BasePosition>? GhostPositions { get; set; }
+    #nullable disable
 
     public bool Equals(BaseTimeStepData other) {
       if (ReferenceEquals(null, other)) {
@@ -3770,7 +3772,7 @@ namespace PacTheMan.Models {
       if (ReferenceEquals(this, other)) {
         return true;
       }
-      return Timestep == other.Timestep && PlayerState == other.PlayerState && GhostPositions == other.GhostPositions;
+      return Timestamp == other.Timestamp && PlayerState == other.PlayerState && (GhostPositions is null ? other.GhostPositions is null : other.GhostPositions is not null && GhostPositions.SequenceEqual(other.GhostPositions));
     }
 
     public override bool Equals(object obj) {
@@ -3788,9 +3790,9 @@ namespace PacTheMan.Models {
 
     public override int GetHashCode() {
       int hash = 1;
-      hash ^= Timestep.GetHashCode();
-      hash ^= PlayerState.GetHashCode();
-      hash ^= GhostPositions.GetHashCode();
+      if (Timestamp is not null) hash ^= Timestamp.Value.GetHashCode();
+      if (PlayerState is not null) hash ^= PlayerState.GetHashCode();
+      if (GhostPositions is not null) hash ^= GhostPositions.GetHashCode();
       return hash;
     }
 
@@ -3801,7 +3803,7 @@ namespace PacTheMan.Models {
 
   /// <inheritdoc />
   [System.CodeDom.Compiler.GeneratedCode("bebopc", "2.1.0")]
-  [BebopRecord(BebopKind.Struct)]
+  [BebopRecord(BebopKind.Message)]
   public sealed class TimeStepData : BaseTimeStepData {
 
     [System.Runtime.CompilerServices.MethodImpl(BebopConstants.HotPath)]
@@ -3834,9 +3836,30 @@ namespace PacTheMan.Models {
 
     [System.Runtime.CompilerServices.MethodImpl(BebopConstants.HotPath)]
     internal static void EncodeInto(BaseTimeStepData record, ref BebopWriter writer) {
-      writer.WriteFloat64(record.Timestep);
-      PacTheMan.Models.PlayerState.EncodeInto(record.PlayerState, ref writer);
-      PacTheMan.Models.GhostMoveMsg.EncodeInto(record.GhostPositions, ref writer);
+      var pos = writer.ReserveRecordLength();
+      var start = writer.Length;
+
+      if (record.Timestamp is not null) {
+        writer.WriteByte(1);
+        writer.WriteFloat64(record.Timestamp.Value);
+      }
+
+      if (record.PlayerState is not null) {
+        writer.WriteByte(2);
+        PacTheMan.Models.PlayerState.EncodeInto(record.PlayerState, ref writer);
+      }
+
+      if (record.GhostPositions is not null) {
+        writer.WriteByte(3);
+        writer.WriteUInt32(unchecked((uint)record.GhostPositions.Count));
+        foreach (var kv0 in record.GhostPositions) {
+          writer.WriteString(kv0.Key);
+          PacTheMan.Models.Position.EncodeInto(kv0.Value, ref writer);
+        }
+      }
+      writer.WriteByte(0);
+      var end = writer.Length;
+      writer.FillRecordLength(pos, unchecked((uint) unchecked(end - start)));
     }
 
     [System.Runtime.CompilerServices.MethodImpl(BebopConstants.HotPath)]
@@ -3903,32 +3926,72 @@ namespace PacTheMan.Models {
     [System.Runtime.CompilerServices.MethodImpl(BebopConstants.HotPath)]
     internal static TimeStepData DecodeFrom(ref BebopReader reader) {
 
-      double field0;
-      field0 = reader.ReadFloat64();
-      BasePlayerState field1;
-      field1 = PacTheMan.Models.PlayerState.DecodeFrom(ref reader);
-      BaseGhostMoveMsg field2;
-      field2 = PacTheMan.Models.GhostMoveMsg.DecodeFrom(ref reader);
-      return new TimeStepData {
-        Timestep = field0,
-        PlayerState = field1,
-        GhostPositions = field2,
-      };
+      var record = new TimeStepData();
+      var length = reader.ReadRecordLength();
+      var end = unchecked((int) (reader.Position + length));
+      while (true) {
+        switch (reader.ReadByte()) {
+          case 0:
+            return record;
+          case 1:
+            record.Timestamp = reader.ReadFloat64();
+            break;
+          case 2:
+            record.PlayerState = PacTheMan.Models.PlayerState.DecodeFrom(ref reader);
+            break;
+          case 3:
+            {
+              var length0 = unchecked((int)reader.ReadUInt32());
+              record.GhostPositions = new System.Collections.Generic.Dictionary<string, BasePosition>(length0);
+              for (var i0 = 0; i0 < length0; i0++) {
+                string k0;
+                BasePosition v0;
+                k0 = reader.ReadString();
+                v0 = PacTheMan.Models.Position.DecodeFrom(ref reader);
+                record.GhostPositions.Add(k0, v0);
+              }
+            }
+            break;
+          default:
+            reader.Position = end;
+            return record;
+        }
+      }
     }
 
     [System.Runtime.CompilerServices.MethodImpl(BebopConstants.HotPath)]
     internal static T DecodeFrom<T>(ref BebopReader reader) where T: BaseTimeStepData, new() {
-      double field0;
-      field0 = reader.ReadFloat64();
-      BasePlayerState field1;
-      field1 = PacTheMan.Models.PlayerState.DecodeFrom(ref reader);
-      BaseGhostMoveMsg field2;
-      field2 = PacTheMan.Models.GhostMoveMsg.DecodeFrom(ref reader);
-      return new T {
-        Timestep = field0,
-        PlayerState = field1,
-        GhostPositions = field2,
-      };
+      var record = new T();
+      var length = reader.ReadRecordLength();
+      var end = unchecked((int) (reader.Position + length));
+      while (true) {
+        switch (reader.ReadByte()) {
+          case 0:
+            return record;
+          case 1:
+            record.Timestamp = reader.ReadFloat64();
+            break;
+          case 2:
+            record.PlayerState = PacTheMan.Models.PlayerState.DecodeFrom(ref reader);
+            break;
+          case 3:
+            {
+              var length0 = unchecked((int)reader.ReadUInt32());
+              record.GhostPositions = new System.Collections.Generic.Dictionary<string, BasePosition>(length0);
+              for (var i0 = 0; i0 < length0; i0++) {
+                string k0;
+                BasePosition v0;
+                k0 = reader.ReadString();
+                v0 = PacTheMan.Models.Position.DecodeFrom(ref reader);
+                record.GhostPositions.Add(k0, v0);
+              }
+            }
+            break;
+          default:
+            reader.Position = end;
+            return record;
+        }
+      }
     }
 
   }

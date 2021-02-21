@@ -42,6 +42,8 @@ namespace lean_pactheman_client {
         public ConcurrentScorePointState ScorePointState { get; set; }
         // ghost positions
         public ConcurrentDictionary<string, Position> GhostPositions { get; set; }
+        // current session
+        public SessionMsg Session { get; set; }
         // strike count
         public int StrikeCount = 0;
 

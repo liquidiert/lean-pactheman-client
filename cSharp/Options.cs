@@ -14,5 +14,8 @@ namespace lean_pactheman_client {
 
         [Option(Required = false, HelpText = "Decide wheter to host or join a session; if not given client ask for session to join", Default = false)]
         public bool Host { get; set; }
+
+        [Option("log", Required = false, HelpText = "Wheter the lean client should log game data", Default = false)]
+        public bool LogGameData { get; set; }
     }
 }

@@ -2,12 +2,16 @@ using Bebop.Attributes;
 using Bebop.Runtime;
 using PacTheMan.Models;
 using System;
-using System.Linq;
 
 namespace lean_pactheman_client {
 
     [RecordHandler]
     public static class GhostMoveHandler {
+
+        public static event EventHandler GhostMoveEvent;
+        public static void SignalPlayerState(GhostMoveMsg move) {
+            GhostMoveEvent?.Invoke(move.GhostPositions, new EventArgs());
+        }
 
         [BindRecord(typeof(BebopRecord<GhostMoveMsg>))]
         public static void HandleGhostMove(object client, GhostMoveMsg msg) {
@@ -16,6 +20,7 @@ namespace lean_pactheman_client {
                     GameState.Instance.GhostPositions
                         .AddOrUpdate(pos.Key, (id) => (Position)pos.Value, (id, p) => (Position)pos.Value);
                 }
+                GhostMoveHandler.SignalPlayerState(msg);
             } catch (Exception ex) {
                 Console.WriteLine(ex.ToString());
             }

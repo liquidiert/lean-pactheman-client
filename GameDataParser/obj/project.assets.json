@@ -1,0 +1,135 @@
+{
+  "version": 3,
+  "targets": {
+    "net5.0": {
+      "bebop/2.1.0": {
+        "type": "package",
+        "compile": {
+          "lib/net5.0/Bebop.dll": {}
+        },
+        "runtime": {
+          "lib/net5.0/Bebop.dll": {}
+        }
+      },
+      "bebop-tools/2.1.0": {
+        "type": "package",
+        "build": {
+          "build/bebop-tools.targets": {}
+        },
+        "buildMultiTargeting": {
+          "buildMultiTargeting/bebop-tools.targets": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "bebop/2.1.0": {
+      "sha512": "+dgOtE1607sBDkRvEtpYDTOCYAuIoIZYD7KkNNjS1GIpyUPkqslOk7CaFeIA9xHtQRPB+M+gWeEqzuhHUnUqVw==",
+      "type": "package",
+      "path": "bebop/2.1.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "128.png",
+        "bebop.2.1.0.nupkg.sha512",
+        "bebop.nuspec",
+        "lib/net472/Bebop.dll",
+        "lib/net472/Bebop.xml",
+        "lib/net48/Bebop.dll",
+        "lib/net48/Bebop.xml",
+        "lib/net5.0/Bebop.dll",
+        "lib/net5.0/Bebop.xml",
+        "lib/netcoreapp3.1/Bebop.dll",
+        "lib/netcoreapp3.1/Bebop.xml"
+      ]
+    },
+    "bebop-tools/2.1.0": {
+      "sha512": "L6MfHp5wkkqBspxltrSMqy3zgKRoHzasQrXA7DL38wBcB10auCnT9TKH+8x94LufrfjFuH+0Q6CVjNbOpqABRA==",
+      "type": "package",
+      "path": "bebop-tools/2.1.0",
+      "hasTools": true,
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "bebop-tools.2.1.0.nupkg.sha512",
+        "bebop-tools.nuspec",
+        "build/bebop-tools.targets",
+        "buildMultiTargeting/bebop-tools.targets",
+        "tools/linux/bebopc",
+        "tools/macos/bebopc",
+        "tools/windows/bebopc.exe"
+      ]
+    }
+  },
+  "projectFileDependencyGroups": {
+    "net5.0": [
+      "bebop >= 2.1.0",
+      "bebop-tools >= 2.1.0"
+    ]
+  },
+  "packageFolders": {
+    "/home/secretone/.nuget/packages/": {}
+  },
+  "project": {
+    "version": "1.0.0",
+    "restore": {
+      "projectUniqueName": "/home/secretone/git_repos/uni/lean-pactheman-client/GameDataParser/GameDataParser.csproj",
+      "projectName": "GameDataParser",
+      "projectPath": "/home/secretone/git_repos/uni/lean-pactheman-client/GameDataParser/GameDataParser.csproj",
+      "packagesPath": "/home/secretone/.nuget/packages/",
+      "outputPath": "/home/secretone/git_repos/uni/lean-pactheman-client/GameDataParser/obj/",
+      "projectStyle": "PackageReference",
+      "configFilePaths": [
+        "/home/secretone/.nuget/NuGet/NuGet.Config"
+      ],
+      "originalTargetFrameworks": [
+        "net5.0"
+      ],
+      "sources": {
+        "https://api.nuget.org/v3/index.json": {}
+      },
+      "frameworks": {
+        "net5.0": {
+          "targetAlias": "net5.0",
+          "projectReferences": {}
+        }
+      },
+      "warningProperties": {
+        "warnAsError": [
+          "NU1605"
+        ]
+      }
+    },
+    "frameworks": {
+      "net5.0": {
+        "targetAlias": "net5.0",
+        "dependencies": {
+          "bebop": {
+            "target": "Package",
+            "version": "[2.1.0, )"
+          },
+          "bebop-tools": {
+            "target": "Package",
+            "version": "[2.1.0, )"
+          }
+        },
+        "imports": [
+          "net461",
+          "net462",
+          "net47",
+          "net471",
+          "net472",
+          "net48"
+        ],
+        "assetTargetFallback": true,
+        "warn": true,
+        "frameworkReferences": {
+          "Microsoft.NETCore.App": {
+            "privateAssets": "all"
+          }
+        },
+        "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/5.0.103/RuntimeIdentifierGraph.json"
+      }
+    }
+  }
+}
