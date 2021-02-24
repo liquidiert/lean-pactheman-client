@@ -11,7 +11,7 @@ namespace lean_pactheman_client {
         [BindRecord(typeof(BebopRecord<NewLevelMsg>))]
         public static void HandleNewLevelMsg(object client, NewLevelMsg msg) {
             Program.SetResetCounter(4f);
-            GameState.Instance.SignalReset();
+            GameState.Instance.SignalNewLevel();
             Console.WriteLine("Starting new Level");
         }
     }

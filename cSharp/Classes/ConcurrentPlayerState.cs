@@ -18,9 +18,9 @@ namespace lean_pactheman_client {
             Lives = new ConcurrentDictionary<Guid, long>(numProcs, 2);
         }
 
-        public PlayerState ToSynchronous(SessionMsg session) {
+        public PlayerState ToSynchronous() {
             return new PlayerState {
-                Session = session,
+                Session = GameState.Instance.Session,
                 Direction = this.Direction,
                 Scores = this.Scores.ToDictionary((kV) => kV.Key, (kV) => kV.Value),
                 Lives = this.Lives.ToDictionary((kV) => kV.Key, (kV) => kV.Value),

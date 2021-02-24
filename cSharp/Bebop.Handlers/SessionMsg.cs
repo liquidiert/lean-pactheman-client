@@ -12,10 +12,10 @@ namespace lean_pactheman_client {
         public static void HandleSessionMsg(object client, SessionMsg msg) {
             Player player = (Player) client;
 
-            player.Session = msg;
+            GameState.Instance.Session = msg;
 
-            Console.WriteLine(player.Session.ClientId);
-            Console.WriteLine(player.Session.SessionId);
+            Console.WriteLine(GameState.Instance.Session.ClientId);
+            Console.WriteLine(GameState.Instance.Session.SessionId);
         }
     }
 }

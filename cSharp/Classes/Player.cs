@@ -20,7 +20,7 @@ namespace lean_pactheman_client {
         }
 
         public PlayerInfo(Player player) {
-            this.Session = player.Session;
+            this.Session = GameState.Instance.Session;
             this.MovementSpeed = player.MovementSpeed;
             this.StartPosition = player.StartPosition;
             this.Position = player.Position;
@@ -29,14 +29,13 @@ namespace lean_pactheman_client {
     public class Player {
 
         private TcpClient _client;
-        public SessionMsg Session;
         private MoveAdapter _moveAdapter;
         public float MovementSpeed { get => 350f; }
         public Position StartPosition { get; set; }
         public Position Position {
-            get => (Position)GameState.Instance.PlayerState.PlayerPositions[(Guid)Session.ClientId] ?? new Position();
+            get => (Position)GameState.Instance.PlayerState.PlayerPositions[(Guid)GameState.Instance.Session.ClientId] ?? new Position();
             set {
-                GameState.Instance.PlayerState.PlayerPositions[(Guid)Session.ClientId] = value;
+                GameState.Instance.PlayerState.PlayerPositions[(Guid)GameState.Instance.Session.ClientId] = value;
             }
         }
         public Position DownScaledPosition {
@@ -51,7 +50,10 @@ namespace lean_pactheman_client {
         public Player(string name) {
             Name = name;
             _moveAdapter = new MoveAdapter();
-            GameState.Instance.ResetEvent += (object sender, EventArgs args) => {
+            GameState.Instance.ResetEvent += (object resetMsg, EventArgs args) => {
+                StartPosition = Position = (resetMsg as ResetMsg).PlayerResetPoints[(Guid)GameState.Instance.Session.ClientId] as Position;
+            };
+            GameState.Instance.NewLevelEvent += (object sender, EventArgs args) => {
                 Position = StartPosition;
             };
         }
@@ -90,7 +92,7 @@ namespace lean_pactheman_client {
         public async Task Exit() {
             Console.WriteLine("called exit");
             var exitMsg = new ExitMsg {
-                Session = Session
+                Session = GameState.Instance.Session
             };
             var netMsg = new NetworkMessage {
                 IncomingOpCode = ExitMsg.OpCode,
@@ -130,10 +132,12 @@ namespace lean_pactheman_client {
             }
         }
 
-        public async Task Host() {
+        public async Task Host(int levelCount, int gameCount) {
             // send join
             var joinMsg = new JoinMsg {
-                PlayerName = Name
+                PlayerName = Name,
+                LevelCount = levelCount,
+                GameCount = gameCount
             };
             var netMsg = new NetworkMessage {
                 IncomingOpCode = JoinMsg.OpCode,
@@ -147,7 +151,7 @@ namespace lean_pactheman_client {
             // send join
             var joinMsg = new JoinMsg {
                 PlayerName = Name,
-                Session = Session
+                Session = GameState.Instance.Session
             };
             var netMsg = new NetworkMessage {
                 IncomingOpCode = JoinMsg.OpCode,
@@ -159,7 +163,7 @@ namespace lean_pactheman_client {
 
         public async Task SetReady() {
             var rdyMsg = new ReadyMsg {
-                Session = Session,
+                Session = GameState.Instance.Session,
                 Ready = true
             };
             var netMsg = new NetworkMessage {
@@ -195,7 +199,7 @@ namespace lean_pactheman_client {
             var msg = new NetworkMessage {
                 IncomingOpCode = PlayerState.OpCode,
                 IncomingRecord = GameState.Instance.PlayerState
-                    .ToSynchronous(Session).EncodeAsImmutable()
+                    .ToSynchronous().EncodeAsImmutable()
             };
 
             try {

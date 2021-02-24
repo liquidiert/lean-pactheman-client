@@ -12,7 +12,7 @@ namespace lean_pactheman_client {
         public static void HandleGameOverMsg(object client, GameOverMsg msg) {
 
             Console.WriteLine($"Received GameOver because {msg.ToHumanReadable()}. Ending lean client now.");
-            Environment.Exit(0);
+            Program.GameOver = true;
 
         }
     }

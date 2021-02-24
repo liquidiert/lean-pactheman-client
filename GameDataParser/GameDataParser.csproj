@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+    <LangVersion>preview</LangVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="bebop" Version="2.1.0"/>
+    <PackageReference Include="bebop-tools" Version="2.1.0"/>
+    <Bebop Include="**/*.bop" OutputDir="./Models/" OutputFile="GameData.g.cs" Namespace="GameDataParser"/>
+  </ItemGroup>
+</Project>

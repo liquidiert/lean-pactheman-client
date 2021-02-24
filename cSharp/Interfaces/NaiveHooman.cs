@@ -16,16 +16,19 @@ namespace lean_pactheman_client {
         List<Position> targetMemory = new List<Position>();
         List<Position> fleeMemory = new List<Position>();
 
+        private void _reset(object sender, EventArgs args) {
+            lastTarget = null;
+            targetMemory.Clear();
+            fleeMemory.Clear();
+        }
+
         public NaiveHooman() {
-            GameState.Instance.ResetEvent += (object sender, EventArgs args) => {
-                lastTarget = null;
-                targetMemory.Clear();
-                fleeMemory.Clear();
-            };
+            GameState.Instance.NewLevelEvent += _reset;
+            GameState.Instance.ResetEvent += _reset;
         }
 
         Position GetAlternativeFromBFS(Position currentPos, List<Position> positionsToAvoid) {
-            
+
             var rootNode = MapGraph.Instance.AdjacencyList.FirstOrDefault(n => n.Position == currentPos);
 
             if (rootNode == null) return currentPos;
@@ -55,6 +58,16 @@ namespace lean_pactheman_client {
 
         }
 
+        List<Position> _getEvadingRegion() {
+            var res = new List<Position>();
+            foreach (var ghostPos in GameState.Instance.GhostPositions.Select(g => g.Value.Downscaled()).ToList()) {
+                var region = (Tuple<Position, int>[,])MapReader.Instance.Map.GetRegion(ghostPos, regionSize: 3);
+                var filteredRegion = region.Where(tuple => tuple.Item2 == 0).Select(tuple => tuple.Item1);
+                res.AddRange(filteredRegion);
+            }
+            return res;
+        }
+
         public Velocity PerformMove(PlayerInfo playerInfo) {
             Position target = lastTarget;
             // TODO: evade ghost region
@@ -62,7 +75,7 @@ namespace lean_pactheman_client {
                 .FirstOrDefault(pair => pair.Value.ManhattanDistance(playerInfo.Position) < 192).Value;
             if (ghostTooClose != null) {
                 if (targetMemory.Count > 0) targetMemory.Clear();
-                
+
                 if (fleeMemory.Count == 0) {
 
                     target = null;
@@ -81,7 +94,7 @@ namespace lean_pactheman_client {
                     fleeMemory = AStar.GetPath(playerInfo.DownScaledPosition,
                         alternativeScorePointPos,
                         iterDepth: 7);
-                        /* positionsToIgnore: GameState.Instance.GhostPositions.Select(g => g.Value.Downscaled()).ToList()) ?? new List<Position>(); */
+                    /* positionsToIgnore: GameState.Instance.GhostPositions.Select(g => g.Value.Downscaled()).ToList()) ?? new List<Position>(); */
                 }
                 if (target == null || target.IsEqualUpToRange(playerInfo.Position, 5f)) {
                     try {
@@ -104,17 +117,31 @@ namespace lean_pactheman_client {
                         Console.WriteLine("from memory");
                     } else {
                         Console.WriteLine("from new path");
-                        var possibleTargets = GameState.Instance.ScorePointState.ScorePointPositions
-                            .Select(sp => new DistanceWrapper(playerInfo.Position.ManhattanDistance(sp.Copy().Add(32)), sp)).ToList();
-                        possibleTargets.Sort((dist1, dist2) => (int)(dist1.Distance - dist2.Distance));
+                        var reachableTarget = GameState.Instance.ScorePointState.ScorePointPositions
+                            .FirstOrDefault(sp => playerInfo.Position.ManhattanDistance(sp.Copy().Downscaled()) < 65);
 
-                        // search a path to the closest one via A*
-                        targetMemory = AStar.GetPath(
-                            playerInfo.DownScaledPosition,
-                            possibleTargets[0].Pos.Downscaled(),
-                            iterDepth: 12,
-                            positionsToIgnore: GameState.Instance.GhostPositions.Select(g => g.Value.Downscaled()).ToList()
-                        );
+                        if (reachableTarget == null) {
+                            var possibleTargets = GameState.Instance.ScorePointState.ScorePointPositions
+                            .Select(sp => new DistanceWrapper(playerInfo.Position.ManhattanDistance(sp.Copy().Add(32)), sp)).ToList();
+                            possibleTargets.Sort((dist1, dist2) => (int)(dist1.Distance - dist2.Distance));
+
+                            // search a path to the closest one via A*
+                            targetMemory = AStar.GetPath(
+                                playerInfo.DownScaledPosition,
+                                possibleTargets[0].Pos.Downscaled(),
+                                iterDepth: 12,
+                                positionsToIgnore: GameState.Instance.GhostPositions.Select(g => g.Value.Downscaled()).ToList()
+                            );
+                        } else {
+                            // search a path to reachable target
+                            targetMemory = AStar.GetPath(
+                                playerInfo.DownScaledPosition,
+                                reachableTarget,
+                                iterDepth: 12,
+                                positionsToIgnore: GameState.Instance.GhostPositions.Select(g => g.Value.Downscaled()).ToList()
+                            );
+                        }
+
                         target = targetMemory.Pop().Multiply(64);
                     }
                     lastTarget = target?.Add(32);

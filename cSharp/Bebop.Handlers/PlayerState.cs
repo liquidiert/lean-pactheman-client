@@ -1,6 +1,7 @@
 using Bebop.Attributes;
 using Bebop.Runtime;
 using PacTheMan.Models;
+using System;
 using System.Linq;
 using System.Collections.Concurrent;
 
@@ -8,6 +9,11 @@ namespace lean_pactheman_client {
 
     [RecordHandler]
     public static class PlayerStateHandler {
+
+        public static event EventHandler PlayerStateEvent;
+        public static void SignalPlayerState(PlayerState state) {
+            PlayerStateEvent?.Invoke(state, new EventArgs());
+        }
 
         [BindRecord(typeof(BebopRecord<PlayerState>))]
         public static void HandlePlayerStateMsg(object client, PlayerState msg) {
@@ -25,7 +31,7 @@ namespace lean_pactheman_client {
                 } else {
                     GameState.Instance.ScorePointState.ScorePointPositions = new ConcurrentBag<Position>(msg.ScorePositions.Select(p => (Position)p));
                 }
-                if (clientId != player.Session.ClientId) {
+                if (clientId != GameState.Instance.Session.ClientId) {
                     var oppPos = (Position)msg.PlayerPositions[clientId];
                     if (oppPos.X > 70 && oppPos.X < 1145) {
                         GameState.Instance.PlayerState.PlayerPositions[clientId] =
@@ -35,6 +41,8 @@ namespace lean_pactheman_client {
                     }
                 }
             }
+
+            PlayerStateHandler.SignalPlayerState(msg);
         }
     }
 }

@@ -17,5 +17,11 @@ namespace lean_pactheman_client {
 
         [Option("level-count", Required = false, HelpText = "How many levels should be played", Default = 5)]
         public int LevelCount { get; set; }
+
+        [Option("game-count", Required = false, HelpText = "How many games should be played (game ends after all lives lost or all levels played)", Default = 1)]
+        public int GameCount { get; set; }
+
+        [Option("log", Required = false, HelpText = "Wheter the lean client should log game data", Default = false)]
+        public bool LogGameData { get; set; }
     }
 }

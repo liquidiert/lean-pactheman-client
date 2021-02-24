@@ -11,6 +11,8 @@ namespace lean_pactheman_client {
                     return "maximum number of Games has been played";
                 case GameOverReason.ExceededStrikes:
                     return $"{msg.PlayerId} has exceeded the maximum strike count";
+                case GameOverReason.ExceededLevelCount:
+                    return "maximum number of levels has been played";
                 default:
                     return "Unknown GameOver cause";
             }
