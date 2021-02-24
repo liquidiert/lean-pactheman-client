@@ -14,5 +14,8 @@ namespace lean_pactheman_client {
 
         [Option(Required = false, HelpText = "Decide wheter to host or join a session; if not given client ask for session to join", Default = false)]
         public bool Host { get; set; }
+
+        [Option("level-count", Required = false, HelpText = "How many levels should be played", Default = 5)]
+        public int LevelCount { get; set; }
     }
 }
