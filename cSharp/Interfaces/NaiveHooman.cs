@@ -5,7 +5,7 @@ using PacTheMan.Models;
 
 namespace lean_pactheman_client {
 
-    class DistanceWrapper {
+    public class DistanceWrapper {
 
         public double Distance { get; set; }
         public Position Pos { get; set; }
@@ -122,7 +122,7 @@ namespace lean_pactheman_client {
 
                         if (reachableTarget == null) {
                             var possibleTargets = GameState.Instance.ScorePointState.ScorePointPositions
-                            .Select(sp => new DistanceWrapper(playerInfo.Position.ManhattanDistance(sp.Copy().Add(32)), sp)).ToList();
+                                .Select(sp => new DistanceWrapper(playerInfo.Position.ManhattanDistance(sp.Copy().Add(32)), sp)).ToList();
                             possibleTargets.Sort((dist1, dist2) => (int)(dist1.Distance - dist2.Distance));
 
                             // search a path to the closest one via A*

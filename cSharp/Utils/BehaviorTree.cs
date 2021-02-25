@@ -116,34 +116,53 @@ namespace lean_pactheman_client {
         private BehaviorTask _rootNode { get; set; }
         private BehaviorTask _prevNode { get; set; }
         private BehaviorTask _currNode { get; set; }
+        private List<BehaviorTask> anchors = new List<BehaviorTask>();
 
-        public BehaviorTreeBuilder AddSequence(bool nested=true) {
+        public BehaviorTreeBuilder AddSequence(bool nested=true, uint anchor=0, uint link=0) {
+            if (anchor == anchors.Count) throw new ArgumentException("anchor indeces must be unique");
             if (_rootNode == null) {
                 _rootNode = new Sequence();
                 _prevNode = _currNode = _rootNode;
+                if (anchor != 0) {
+                    anchors.Insert((int)anchor-1, _currNode);
+                }
             } else {
                 var newCurr = new Sequence();
                 if (!nested) {
                     _prevNode.Children.Add(newCurr);
+                } else if (link != 0) {
+                    anchors[(int)link-1].Children.Add(newCurr);
                 } else {
                     _currNode.Children.Add(newCurr);
-                    _prevNode = _currNode;
+                    if (anchor == 0) _prevNode = _currNode;
+                }
+                if (anchor != 0) {
+                    anchors.Insert((int)anchor-1, _currNode);
                 }
                 _currNode = newCurr;
             }
             return this;
         }
-        public BehaviorTreeBuilder AddSelector(bool nested=true) {
+        public BehaviorTreeBuilder AddSelector(bool nested=true, uint anchor=0, uint link=0) {
+            if (anchor == anchors.Count) throw new ArgumentException("anchor indeces must be unique");
             if (_rootNode == null) {
                 _rootNode = new Selector();
                 _prevNode = _currNode = _rootNode;
+                if (anchor != 0) {
+                    anchors.Insert((int)anchor-1, _currNode);
+                }
             } else {
                 var newCurr = new Selector();
                 if (!nested) {
                     _prevNode.Children.Add(newCurr);
+                } else if (link != 0) {
+                    anchors[(int)link-1].Children.Add(newCurr);
                 } else {
                     _currNode.Children.Add(newCurr);
-                    _prevNode = _currNode;
+                    if (anchor == 0) _prevNode = _currNode;
+                }
+                if (anchor != 0) {
+                    anchors.Insert((int)anchor-1, _currNode);
                 }
                 _currNode = newCurr;
             }
@@ -163,23 +182,36 @@ namespace lean_pactheman_client {
             _currNode.Children.Add(new Action(action));
             return this;
         }
-        public BehaviorTreeBuilder AddGeneric(BehaviorTask task, bool nested=true) {
+        public BehaviorTreeBuilder AddGeneric(BehaviorTask task, bool nested=true, bool isComposition=false, uint anchor=0, uint link=0) {
+            if (anchor == anchors.Count) throw new ArgumentException("anchor indeces must be unique");
             if (_rootNode == null) {
-                if (task.GetType() != typeof(Action) || task.GetType() == typeof(Condition)) {
+                if (isComposition || task.GetType() != typeof(Action) || task.GetType() != typeof(Condition)) {
                     _prevNode = _rootNode = task;
+                    if (anchor != 0) {
+                        anchors.Insert((int)anchor-1, _currNode);
+                    }
                 } else {
                     throw new ArgumentException("Tree must have a composition root.");
                 }
-            } if (!nested) {
-                if (task.GetType() == typeof(Action) || task.GetType() == typeof(Condition)) {
-                    throw new ArgumentException($"A non-leaf node must be a composition node! At {_currNode.GetType()}");
+            }
+            
+            if (isComposition) {
+                if (!nested) {
+                    _prevNode.Children.Add(task);
+                } else if (link != 0) {
+                    anchors[(int)link-1].Children.Add(task);
+                } else {
+                    _currNode.Children.Add(task);
+                    if (anchor == 0) _prevNode = _currNode;
                 }
-                _prevNode.Children.Add(task);
+                if (anchor != 0 && isComposition) {
+                    anchors.Insert((int)anchor-1, _currNode);
+                }
+                _currNode = task;
             } else {
                 _currNode.Children.Add(task);
-                _prevNode = _currNode;
             }
-            _currNode = task;
+
             return this;
         }
 

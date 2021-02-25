@@ -183,6 +183,8 @@ namespace lean_pactheman_client {
                 updateVelocity = new Velocity(0);
             }
 
+            GameState.Instance.PlayerState.Direction = MovingState.Up.FromDirection(updateVelocity);
+
             Position updatedPosition = Position.Copy().AddOther(
                 updateVelocity.Multiply(MovementSpeed).Multiply(Constants.FRAME_DELTA_APPROX).ToPosition()
             );

@@ -5,8 +5,12 @@ namespace lean_pactheman_client {
 
     public static class VelocityExtensions {
 
-        public static void Print(this Velocity pos) {
-            Console.WriteLine($"{pos.X} {pos.Y}");
+        public static void Print(this Velocity v) {
+            Console.WriteLine($"{v.X} {v.Y}");
+        }
+
+        public static Velocity Copy(this Velocity v) {
+            return new Velocity(v.X, v.Y);
         }
 
         public static Position ToPosition(this Velocity velocity) {

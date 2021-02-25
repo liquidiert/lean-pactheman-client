@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 using PacTheMan.Models;
 
@@ -24,6 +25,7 @@ namespace lean_pactheman_client {
             Directory.CreateDirectory("GameData");
 
             GameState.Instance.NewLevelEvent += _saveLevel;
+            GameState.Instance.NewGameEvent += _saveGame;
             PlayerStateHandler.PlayerStateEvent += _addPlayerState;
             GhostMoveHandler.GhostMoveEvent += _addGhostPositions;
 
@@ -39,21 +41,27 @@ namespace lean_pactheman_client {
             GC.SuppressFinalize(this);
         }
 
-        public async void Dispose(bool disposing) {
+        public void Dispose(bool disposing) {
             if (_diposed) return;
 
             if (disposing) {
-                _gameDataFile = File.OpenWrite($"GameData/gamedata_ptm_{new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds()}.bopr");
-                if (_gameData.LevelData == null) { // no level has been finished
-                    _saveLevel(null, null);
-                }
-                await _gameDataFile.WriteAsync(_gameData.Encode());
-                _gameDataFile.Close();
-                _playerStates.Clear();
-                _ghostPositions.Clear();
+                _writeToFile();
             }
 
             _diposed = true;
+        }
+
+        async void _writeToFile() {
+            _gameDataFile = File.OpenWrite($"GameData/gamedata_ptm_{new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds()}.bopr");
+            if (_gameData.LevelData == null) { // no level has been finished
+                _saveLevel(null, null);
+            }
+            _gameData.MyId = (Guid)GameState.Instance.Session.ClientId;
+            await _gameDataFile.WriteAsync(_gameData.Encode());
+            _gameDataFile.Close();
+            _playerStates.Clear();
+            _ghostPositions.Clear();
+            _gameData.LevelData = null;
         }
 
         void _addPlayerState(object state, EventArgs args) {
@@ -102,6 +110,10 @@ namespace lean_pactheman_client {
             // clear current level
             _playerStates.Clear();
             _ghostPositions.Clear();
+        }
+
+        void _saveGame(object state, EventArgs args) {
+            _writeToFile();
         }
 
     }

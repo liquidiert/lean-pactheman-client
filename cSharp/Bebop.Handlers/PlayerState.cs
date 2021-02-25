@@ -40,9 +40,11 @@ namespace lean_pactheman_client {
                         GameState.Instance.PlayerState.PlayerPositions[clientId] = oppPos;
                     }
                 }
-            }
 
-            PlayerStateHandler.SignalPlayerState(msg);
+                if (clientId == GameState.Instance.Session.ClientId) {
+                    PlayerStateHandler.SignalPlayerState(msg);
+                }
+            }
         }
     }
 }

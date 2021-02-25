@@ -21,5 +21,31 @@ namespace lean_pactheman_client {
             this.X = x;
             this.Y = y;
         }
+
+        public override bool Equals(object toCompare) {
+            if (toCompare == null) return false;
+            if (!(toCompare is Velocity)) return false;
+            return X == (toCompare as Velocity).X && Y == (toCompare as Velocity).Y;
+        }
+
+        public override int GetHashCode() {
+            return X.GetHashCode() ^ Y.GetHashCode();
+        }
+
+#nullable enable
+        public static bool operator ==(Velocity? a, Velocity? b) {
+            var unavailable = new Velocity();
+            a ??= unavailable;
+            b ??= unavailable;
+            return a.X == b.X && a.Y == b.Y;
+        }
+
+        public static bool operator !=(Velocity? a, Velocity? b) {
+            var unavailable = new Velocity();
+            a ??= unavailable;
+            b ??= unavailable;
+            return a.X != b.X && a.Y != b.Y;
+        }
+#nullable restore
     }
 }

@@ -75,3 +75,28 @@ This is a read-only class containing all important information of your player:
 ## Extension Methods
 There are some useful extension methods which can be found at `Utils/Extensions`. An example is the extension method `AddMany` for `Lists` that adds many in place created entries.  
 Sometimes you have to import `PacTheMan.Models` because some extensions (e.g. for `Position`) are specified in this namespace.
+
+## BehaviorTree builder
+
+### “problematic” configurations
+You may want to use deep nested compositions in your behavior tree; the `nested: false` argument won't suffice in a situation like this:  
+```c#
+builder.AddSequence(nested: false) // #1
+    .AddSequence() // #2
+        .AddSequence() // #3
+    .AddSequence(nested: false) // should be executed after #2 but will be called after #3
+```
+cause nested only works for compositions that only have actions / conditions as children.  
+If you want to continue at a different composition use the anchor and link arguments:  
+```c#
+builder.AddSequence(nested: false) // #1
+    .AddSequence(anchor: 1) // #2
+        .AddSequence() // #3
+    .AddSequence(link: 1) // now executes after #2
+```
+
+Things to now about anchors / links:
+- Anchor indices start at 1 (cause 0 is reserved for default nesting)
+- Indices **must** be unique
+- You can link as many nodes to an anchor as you want
+- only compositions support anchors / links (`AddGeneric` ignores the `anchor` argument if `isComposition = false`)

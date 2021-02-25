@@ -22,6 +22,8 @@ namespace GameDataParser {
   public abstract class BaseGameData : System.IEquatable<BaseGameData> {
     [System.Diagnostics.CodeAnalysis.NotNull, System.Diagnostics.CodeAnalysis.DisallowNull]
     public BaseLevelData[] LevelData { get; set; }
+    [System.Diagnostics.CodeAnalysis.NotNull, System.Diagnostics.CodeAnalysis.DisallowNull]
+    public System.Guid MyId { get; set; }
 
     public bool Equals(BaseGameData other) {
       if (ReferenceEquals(null, other)) {
@@ -30,7 +32,7 @@ namespace GameDataParser {
       if (ReferenceEquals(this, other)) {
         return true;
       }
-      return (LevelData is null ? other.LevelData is null : other.LevelData is not null && LevelData.SequenceEqual(other.LevelData));
+      return (LevelData is null ? other.LevelData is null : other.LevelData is not null && LevelData.SequenceEqual(other.LevelData)) && MyId == other.MyId;
     }
 
     public override bool Equals(object obj) {
@@ -49,6 +51,7 @@ namespace GameDataParser {
     public override int GetHashCode() {
       int hash = 1;
       hash ^= LevelData.GetHashCode();
+      hash ^= MyId.GetHashCode();
       return hash;
     }
 
@@ -99,6 +102,7 @@ namespace GameDataParser {
           GameDataParser.LevelData.EncodeInto(record.LevelData[i0], ref writer);
         }
       }
+      writer.WriteGuid(record.MyId);
     }
 
     [System.Runtime.CompilerServices.MethodImpl(BebopConstants.HotPath)]
@@ -175,8 +179,11 @@ namespace GameDataParser {
           field0[i0] = x0;
         }
       }
+      System.Guid field1;
+      field1 = reader.ReadGuid();
       return new GameData {
         LevelData = field0,
+        MyId = field1,
       };
     }
 
@@ -192,8 +199,11 @@ namespace GameDataParser {
           field0[i0] = x0;
         }
       }
+      System.Guid field1;
+      field1 = reader.ReadGuid();
       return new T {
         LevelData = field0,
+        MyId = field1,
       };
     }
 
