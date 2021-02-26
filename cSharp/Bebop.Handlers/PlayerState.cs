@@ -45,6 +45,8 @@ namespace lean_pactheman_client {
                     PlayerStateHandler.SignalPlayerState(msg);
                 }
             }
+
+            PlayerMediator.WaitPlayerStateHandle.Set();
         }
     }
 }

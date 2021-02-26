@@ -4,6 +4,9 @@ namespace lean_pactheman_client {
     public class Velocity {
         public float X { get; set; }
         public float Y { get; set; }
+        public static Velocity Zero {
+            get => new Velocity();
+        }
 
         public Velocity() {
             this.X = 0;
@@ -34,14 +37,14 @@ namespace lean_pactheman_client {
 
 #nullable enable
         public static bool operator ==(Velocity? a, Velocity? b) {
-            var unavailable = new Velocity();
+            var unavailable = Zero;
             a ??= unavailable;
             b ??= unavailable;
             return a.X == b.X && a.Y == b.Y;
         }
 
         public static bool operator !=(Velocity? a, Velocity? b) {
-            var unavailable = new Velocity();
+            var unavailable = Zero;
             a ??= unavailable;
             b ??= unavailable;
             return a.X != b.X && a.Y != b.Y;

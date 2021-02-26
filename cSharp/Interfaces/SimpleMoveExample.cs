@@ -3,14 +3,14 @@ using System.Collections.Generic;
 
 namespace lean_pactheman_client {
     public class SimpleMoveExample : IMove {
-        public Velocity PerformMove(PlayerInfo playerInfo) {
+        public (bool, Velocity) PerformMove(PlayerInfo playerInfo) {
             var velocities = new List<Velocity>().AddMany(
                     new Velocity(-64, 0), // left
                     new Velocity(64, 0), // right
                     new Velocity(0, 64), // up
                     new Velocity(0, -64) // down
                 );
-            return velocities[new Random().Next(velocities.Count)];
+            return (true, velocities[new Random().Next(velocities.Count)]);
         }
     }
 }

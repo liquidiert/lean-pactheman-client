@@ -46,6 +46,7 @@ namespace lean_pactheman_client {
             GameState.Instance.Init();
 
             player = new Player(options.PlayerName);
+            PlayerMediator.SetPlayer(player);
             await player.Connect(options.Ip, options.Port);
 
             if (!options.Host) {

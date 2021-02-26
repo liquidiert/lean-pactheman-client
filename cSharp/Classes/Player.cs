@@ -182,15 +182,61 @@ namespace lean_pactheman_client {
             await _socket.SendAsync(netMsg.Encode(), WebSocketMessageType.Binary, true, _ct);
         }
 
+        public void UpdateState(Velocity update) {
+            update.Normalize();
+
+            GameState.Instance.PlayerState.Direction = MovingState.Up.FromDirection(update);
+
+            Position updatedPosition = Position.Copy().AddOther(
+                update.Multiply(MovementSpeed).Multiply(Constants.FRAME_DELTA_APPROX).ToPosition()
+            );
+
+            if (!MapReader.Instance.IsValidPosition(updatedPosition.Copy().Downscaled())) return;
+
+            // teleport if entering either left or right gate
+            if (updatedPosition.X <= 38 || updatedPosition.X >= 1177) {
+                Position = UpdatePosition(x: -1215, xFactor: -1);
+            } else {
+                Position = updatedPosition;
+            }
+        }
+
+        public async Task SendState() {
+            var msg = new NetworkMessage {
+                IncomingOpCode = PlayerState.OpCode,
+                IncomingRecord = GameState.Instance.PlayerState
+                    .ToSynchronous().EncodeAsImmutable()
+            };
+
+            try {
+                if (_ct.IsCancellationRequested) {
+                    _ct.ThrowIfCancellationRequested();
+                }
+
+                await _socket.SendAsync(msg.Encode(), WebSocketMessageType.Binary, true, _ct);
+            } catch (ObjectDisposedException) {
+                // swallow -> server sent exit
+            } catch (OperationCanceledException) {
+                // swallow -> thread canceled
+            }
+        }
+
         public async void Move() {
 
             Velocity updateVelocity;
 
+            (bool SendMove, Velocity Velocity) move = (true, Velocity.Zero);
+            
             try {
-                updateVelocity = _moveAdapter.GetMove(new PlayerInfo(this));
-            } catch (ArgumentOutOfRangeException) {
-                updateVelocity = new Velocity(0);
+                move = _moveAdapter.GetMove(new PlayerInfo(this));
+            } catch (Exception ex) {
+                move.SendMove = false;
+                Console.WriteLine(ex.ToString());
+            } finally {
+                updateVelocity = move.Velocity;
             }
+
+            if (!move.SendMove) return;
 
             GameState.Instance.PlayerState.Direction = MovingState.Up.FromDirection(updateVelocity);
 

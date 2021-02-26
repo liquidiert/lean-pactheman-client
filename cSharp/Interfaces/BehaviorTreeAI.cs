@@ -101,7 +101,7 @@ namespace lean_pactheman_client {
             var targets = AStar.GetPath(
                 selfPos.Copy().Downscaled(),
                 possibleTargets[0].Pos.Downscaled(),
-                iterDepth: 7
+                iterDepth: 8
             );
             if (targets == null) return false;
             var updatePos = targets.Pop();
@@ -159,13 +159,13 @@ namespace lean_pactheman_client {
             .Build();
         }
 
-        public Velocity PerformMove(PlayerInfo playerInfo) {
+        public (bool, Velocity) PerformMove(PlayerInfo playerInfo) {
 
             Info = playerInfo;
 
             bt.Run();
 
-            return ResultVelocity;
+            return (true, ResultVelocity);
         }
     }
 }

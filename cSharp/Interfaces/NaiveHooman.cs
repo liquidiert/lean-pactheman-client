@@ -68,7 +68,7 @@ namespace lean_pactheman_client {
             return res;
         }
 
-        public Velocity PerformMove(PlayerInfo playerInfo) {
+        public (bool, Velocity) PerformMove(PlayerInfo playerInfo) {
             Position target = lastTarget;
             // TODO: evade ghost region
             var ghostTooClose = GameState.Instance.GhostPositions
@@ -103,7 +103,7 @@ namespace lean_pactheman_client {
                         Console.WriteLine("setting new flee target");
                     } catch {
                         Console.WriteLine("no flee target was found");
-                        return new Velocity(playerInfo.Position.Copy().SubOther(ghostTooClose));
+                        return (true, new Velocity(playerInfo.Position.Copy().SubOther(ghostTooClose)));
                     }
                 }
             } else { // no ghosts detected
@@ -147,7 +147,7 @@ namespace lean_pactheman_client {
                     lastTarget = target?.Add(32);
                 }
             }
-            return new Velocity(target?.Copy().SubOther(playerInfo.Position) ?? playerInfo.Position);
+            return (true, new Velocity(target?.Copy().SubOther(playerInfo.Position) ?? playerInfo.Position));
         }
     }
 }
