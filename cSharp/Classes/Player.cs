@@ -4,9 +4,10 @@ using System.Net.NetworkInformation;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Net.Sockets;
+using System.Net.WebSockets;
 using PacTheMan.Models;
 using Bebop.Runtime;
+using Ninja.WebSockets;
 
 namespace lean_pactheman_client {
 
@@ -28,7 +29,7 @@ namespace lean_pactheman_client {
     }
     public class Player {
 
-        private TcpClient _client;
+        private WebSocket _socket;
         private MoveAdapter _moveAdapter;
         public float MovementSpeed { get => 350f; }
         public Position StartPosition { get; set; }
@@ -62,14 +63,16 @@ namespace lean_pactheman_client {
             return new Position() { X = (this.Position.X + x) * xFactor, Y = (this.Position.Y + y) * yFactor };
         }
 
-        public async Task Connect(IPAddress address, int port) {
+        public async Task Connect(string address, int port) {
             if (Connected) return;
             _ctSource = new CancellationTokenSource();
             _ct = _ctSource.Token;
-            _client = new TcpClient() { NoDelay = true };
+
+            var factory = new WebSocketClientFactory();
+            var uri = new Uri($"ws://{address}:{port}");
 
             try {
-                await _client.ConnectAsync(address, port);
+                _socket = await factory.ConnectAsync(uri);
             } catch (Exception ex) {
                 Console.WriteLine(ex.ToString());
             }
@@ -79,11 +82,12 @@ namespace lean_pactheman_client {
             Connected = true;
         }
 
-        public void Disconnect() {
+        public async void Disconnect() {
             Console.WriteLine("Disconnect got called");
+            await _socket.CloseAsync(WebSocketCloseStatus.NormalClosure, null, CancellationToken.None);
             if (Connected) {
                 _ctSource.Cancel();
-                _client.Dispose();
+                _socket.Dispose();
                 _ctSource.Dispose();
             }
             Connected = false;
@@ -98,9 +102,7 @@ namespace lean_pactheman_client {
                 IncomingOpCode = ExitMsg.OpCode,
                 IncomingRecord = exitMsg.EncodeAsImmutable()
             };
-            if (_client?.GetState() == TcpState.Established) {
-                await _client.GetStream().WriteAsync(netMsg.Encode());
-            }
+            await _socket.SendAsync(netMsg.Encode(), WebSocketMessageType.Binary, true, _ct);
             Disconnect();
         }
 
@@ -116,14 +118,21 @@ namespace lean_pactheman_client {
                         _ct.ThrowIfCancellationRequested();
                     }
 
-                    if (await _client.GetStream().ReadAsync(buffer, _ct) == 0) {
-                        // server closed session
-                        this.Disconnect();
-                        return;
+                    WebSocketReceiveResult res = await _socket.ReceiveAsync(buffer, _ct);
+
+                    switch (res.MessageType) {
+                        case WebSocketMessageType.Close:
+                            Disconnect();
+                            return;
+                        case WebSocketMessageType.Text:
+                            Console.WriteLine(buffer);
+                            break;
+                        case WebSocketMessageType.Binary:
+                            var msg = NetworkMessage.Decode(buffer);
+                            BebopMirror.HandleRecord(msg.IncomingRecord.ToArray(), msg.IncomingOpCode ?? 0, this);
+                            break;
                     }
 
-                    var msg = NetworkMessage.Decode(buffer);
-                    BebopMirror.HandleRecord(msg.IncomingRecord.ToArray(), msg.IncomingOpCode ?? 0, this);
                 }
             } catch (OperationCanceledException) {
                 // swallow -> canceled thread
@@ -144,7 +153,7 @@ namespace lean_pactheman_client {
                 IncomingRecord = joinMsg.EncodeAsImmutable()
             };
 
-            await _client.GetStream().WriteAsync(netMsg.Encode());
+            await _socket.SendAsync(netMsg.Encode(), WebSocketMessageType.Binary, true, _ct);
         }
 
         public async Task Join() {
@@ -158,7 +167,7 @@ namespace lean_pactheman_client {
                 IncomingRecord = joinMsg.EncodeAsImmutable()
             };
 
-            await _client.GetStream().WriteAsync(netMsg.Encode());
+            await _socket.SendAsync(netMsg.Encode(), WebSocketMessageType.Binary, true, _ct);
         }
 
         public async Task SetReady() {
@@ -170,7 +179,7 @@ namespace lean_pactheman_client {
                 IncomingOpCode = ReadyMsg.OpCode,
                 IncomingRecord = rdyMsg.EncodeAsImmutable()
             };
-            await _client.GetStream().WriteAsync(netMsg.Encode());
+            await _socket.SendAsync(netMsg.Encode(), WebSocketMessageType.Binary, true, _ct);
         }
 
         public async void Move() {
@@ -209,7 +218,7 @@ namespace lean_pactheman_client {
                     _ct.ThrowIfCancellationRequested();
                 }
 
-                await _client.GetStream().WriteAsync(msg.Encode());
+                await _socket.SendAsync(msg.Encode(), WebSocketMessageType.Binary, true, _ct);
             } catch (ObjectDisposedException) {
                 // swallow -> server sent exit
             } catch (OperationCanceledException) {

@@ -46,7 +46,7 @@ namespace lean_pactheman_client {
             GameState.Instance.Init();
 
             player = new Player(options.PlayerName);
-            await player.Connect(ipAddress, options.Port);
+            await player.Connect(options.Ip, options.Port);
 
             if (!options.Host) {
                 Console.WriteLine("Enter session id:");
