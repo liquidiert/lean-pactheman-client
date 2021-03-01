@@ -103,7 +103,7 @@ namespace lean_pactheman_client {
                 possibleTargets[0].Pos.Downscaled(),
                 iterDepth: 8
             );
-            if (targets == null) return false;
+            if (targets == null || targets.Count == 0) return false;
             var updatePos = targets.Pop();
             if (MapReader.Instance.IsValidPosition(updatePos)) {
                 BehaviorTreeAI.ResultVelocity = new Velocity(updatePos.Multiply(64).Add(32).SubOther(selfPos));

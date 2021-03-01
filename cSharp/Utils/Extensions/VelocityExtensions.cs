@@ -17,6 +17,21 @@ namespace lean_pactheman_client {
             return new Position { X = velocity.X, Y = velocity.Y };
         }
 
+        public static Velocity FromMovingState(this Velocity velocity, MovingState state) {
+            switch (state) {
+                case MovingState.Up:
+                    return new Velocity(0, -1);
+                case MovingState.Down:
+                    return new Velocity(0, 1);
+                case MovingState.Left:
+                    return new Velocity(-1, 0);
+                case MovingState.Right:
+                    return new Velocity(1, 0);
+                default:
+                    return Velocity.Zero;
+            }
+        }
+
         public static Velocity Normalize(this Velocity velocity) {
             velocity.Divide(Math.Sqrt(Math.Pow(velocity.X, 2) + Math.Pow(velocity.Y, 2)));
             velocity.Round();

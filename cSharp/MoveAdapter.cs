@@ -5,7 +5,7 @@ namespace lean_pactheman_client {
 
         public MoveAdapter() {
             // exchange SimpleMoveExample with your own implementation here
-            moveInstructor = new BehaviorTreeAI();
+            moveInstructor = new DQN.DQN();
         }
 
         public (bool SendMove, Velocity Velocity) GetMove(PlayerInfo info) => moveInstructor.PerformMove(info);

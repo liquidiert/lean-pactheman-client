@@ -233,7 +233,7 @@ namespace lean_pactheman_client {
                 move.SendMove = false;
                 Console.WriteLine(ex.ToString());
             } finally {
-                updateVelocity = move.Velocity;
+                updateVelocity = move.Velocity.Normalize();
             }
 
             if (!move.SendMove) return;

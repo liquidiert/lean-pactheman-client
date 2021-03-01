@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 namespace lean_pactheman_client {
     public static class PlayerMediator {
         private static Player _playerInstance { get; set; }
-        public static EventWaitHandle WaitPlayerStateHandle = new AutoResetEvent(false);
+        public static EventWaitHandle WaitRewardHandle = new AutoResetEvent(false);
 
         public static void SetPlayer(Player p) => _playerInstance = p;
         /// <summary>
@@ -15,9 +15,9 @@ namespace lean_pactheman_client {
         /// <returns><c>bool</c>: Wheter update was successful or not</returns>
         public static async Task<bool> ReceivePlayerStateUpdate(Velocity updateVelocity) {
             try {
-                _playerInstance.UpdateState(updateVelocity);
+                _playerInstance.UpdateState(updateVelocity.Normalize());
                 await _playerInstance.SendState();
-                return WaitPlayerStateHandle.WaitOne();
+                return WaitRewardHandle.WaitOne();
             } catch (Exception ex) {
                 Console.WriteLine(ex.ToString());
                 return false;
