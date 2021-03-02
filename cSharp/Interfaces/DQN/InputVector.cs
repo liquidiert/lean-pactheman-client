@@ -25,15 +25,43 @@ namespace lean_pactheman_client.DQN {
         int clydePosition_Y { get; set; }
 
         public Tensor Tensor {
+            get => tf.convert_to_tensor(
+                    new NDArray(
+                        new float[,] {
+                            {
+                                selfPosition_X, selfPosition_Y,
+                                blinkyPosition_X, blinkyPosition_Y,
+                                inkyPosition_X, inkyPosition_Y,
+                                pinkyPosition_X, pinkyPosition_Y,
+                                clydePosition_X, clydePosition_Y
+                            }
+                        }
+                    )
+                );
+        }
+
+        public NDArray NDArray {
             get => new NDArray(
                     new float[,] {
-                        {selfPosition_X, selfPosition_Y,
-                        blinkyPosition_X, blinkyPosition_Y,
-                        inkyPosition_X, inkyPosition_Y,
-                        pinkyPosition_X, pinkyPosition_Y,
-                        clydePosition_X, clydePosition_Y}
+                        {
+                            selfPosition_X, selfPosition_Y,
+                            blinkyPosition_X, blinkyPosition_Y,
+                            inkyPosition_X, inkyPosition_Y,
+                            pinkyPosition_X, pinkyPosition_Y,
+                            clydePosition_X, clydePosition_Y
+                        }
                     }
                 );
+        }
+
+        public List<float> List {
+            get => new List<float> {
+                    selfPosition_X, selfPosition_Y,
+                    blinkyPosition_X, blinkyPosition_Y,
+                    inkyPosition_X, inkyPosition_Y,
+                    pinkyPosition_X, pinkyPosition_Y,
+                    clydePosition_X, clydePosition_Y
+                };
         }
 
         public InputVector() {

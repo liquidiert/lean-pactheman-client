@@ -119,7 +119,7 @@ namespace lean_pactheman_client {
         private List<BehaviorTask> anchors = new List<BehaviorTask>();
 
         public BehaviorTreeBuilder AddSequence(bool nested=true, uint anchor=0, uint link=0) {
-            if (anchor == anchors.Count) throw new ArgumentException("anchor indeces must be unique");
+            if (anchor == anchors.Count) throw new ArgumentException("anchor indices must be unique");
             if (_rootNode == null) {
                 _rootNode = new Sequence();
                 _prevNode = _currNode = _rootNode;
@@ -144,7 +144,7 @@ namespace lean_pactheman_client {
             return this;
         }
         public BehaviorTreeBuilder AddSelector(bool nested=true, uint anchor=0, uint link=0) {
-            if (anchor == anchors.Count) throw new ArgumentException("anchor indeces must be unique");
+            if (anchor == anchors.Count) throw new ArgumentException("anchor indices must be unique");
             if (_rootNode == null) {
                 _rootNode = new Selector();
                 _prevNode = _currNode = _rootNode;
@@ -183,7 +183,7 @@ namespace lean_pactheman_client {
             return this;
         }
         public BehaviorTreeBuilder AddGeneric(BehaviorTask task, bool nested=true, bool isComposition=false, uint anchor=0, uint link=0) {
-            if (anchor == anchors.Count) throw new ArgumentException("anchor indeces must be unique");
+            if (anchor == anchors.Count) throw new ArgumentException("anchor indices must be unique");
             if (_rootNode == null) {
                 if (isComposition || task.GetType() != typeof(Action) || task.GetType() != typeof(Condition)) {
                     _prevNode = _rootNode = task;

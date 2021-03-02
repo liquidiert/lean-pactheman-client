@@ -27,8 +27,9 @@ namespace lean_pactheman_client {
             this.Position = player.Position;
         }
     }
-    public class Player {
+    public class Player : IDisposable {
 
+        private bool _disposed = false;
         private WebSocket _socket;
         private MoveAdapter _moveAdapter;
         public float MovementSpeed { get => 350f; }
@@ -52,11 +53,28 @@ namespace lean_pactheman_client {
             Name = name;
             _moveAdapter = new MoveAdapter();
             GameState.Instance.ResetEvent += (object resetMsg, EventArgs args) => {
-                StartPosition = Position = (resetMsg as ResetMsg).PlayerResetPoints[(Guid)GameState.Instance.Session.ClientId] as Position;
+                Position = StartPosition;
             };
             GameState.Instance.NewLevelEvent += (object sender, EventArgs args) => {
                 Position = StartPosition;
             };
+            GameState.Instance.NewGameEvent += (object sender, EventArgs args) => {
+                StartPosition = Position = (args as NewGameEventArgs).ResetMessage.PlayerResetPoints[(Guid)GameState.Instance.Session.ClientId] as Position;
+            };
+        }
+
+        public void Dispose() => Dispose(true);
+        protected void Dispose(bool disposing) {
+            if (_disposed) return;
+
+            if (disposing) {
+                _ctSource.Cancel();
+                _moveAdapter.Dispose();
+                _socket.Dispose();
+                _ctSource.Dispose();
+            }
+
+            _disposed = true;
         }
 
         private Position UpdatePosition(float x = 0, int xFactor = 1, float y = 0, int yFactor = 1) {
@@ -86,9 +104,7 @@ namespace lean_pactheman_client {
             Console.WriteLine("Disconnect got called");
             await _socket.CloseAsync(WebSocketCloseStatus.NormalClosure, null, CancellationToken.None);
             if (Connected) {
-                _ctSource.Cancel();
-                _socket.Dispose();
-                _ctSource.Dispose();
+                Dispose();
             }
             Connected = false;
         }

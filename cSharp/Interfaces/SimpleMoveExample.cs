@@ -12,5 +12,7 @@ namespace lean_pactheman_client {
                 );
             return (true, velocities[new Random().Next(velocities.Count)]);
         }
+
+        public void Dispose() {}
     }
 }

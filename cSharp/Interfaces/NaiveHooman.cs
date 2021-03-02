@@ -27,6 +27,8 @@ namespace lean_pactheman_client {
             GameState.Instance.ResetEvent += _reset;
         }
 
+        public void Dispose() {}
+
         Position GetAlternativeFromBFS(Position currentPos, List<Position> positionsToAvoid) {
 
             var rootNode = MapGraph.Instance.AdjacencyList.FirstOrDefault(n => n.Position == currentPos);

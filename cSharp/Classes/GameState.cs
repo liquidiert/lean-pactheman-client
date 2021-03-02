@@ -3,6 +3,13 @@ using System.Collections.Concurrent;
 using PacTheMan.Models;
 
 namespace lean_pactheman_client {
+
+    public class NewGameEventArgs : EventArgs {
+        public ResetMsg ResetMessage { get; set; }
+
+        public NewGameEventArgs(ResetMsg r) => ResetMessage = r; 
+    }
+
     public class GameState {
         private static readonly Lazy<GameState> lazy = new Lazy<GameState>(() => new GameState());
         public static GameState Instance { get => lazy.Value; }
@@ -37,8 +44,14 @@ namespace lean_pactheman_client {
         }
 
         public event EventHandler NewGameEvent;
-        public void SignalNewGame() {
-            NewGameEvent?.Invoke(this, new EventArgs());
+        public void SignalNewGame(ResetMsg msg) {
+            foreach (var gP in msg.GhostResetPoints) {
+                GhostPositions.AddOrUpdate(gP.Key, p => (Position)gP.Value, (k,p) => (Position)gP.Value);
+            }
+            foreach (var p in msg.PlayerResetPoints) {
+                PlayerState.PlayerPositions.AddOrUpdate(p.Key, pp => (Position)p.Value, (k,pp) => (Position)p.Value);
+            }
+            NewGameEvent?.Invoke(this, new NewGameEventArgs(msg));
         }
 
         // state of the two pactheman players

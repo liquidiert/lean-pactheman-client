@@ -59,5 +59,20 @@ namespace lean_pactheman_client {
             }
         }
 
+        public static T[,] To2Dim<T, G>(this List<G> ts) where G : List<T> {
+            var res = new T[ts.Count, ts[0].Count];
+
+            var notSameDim = ts.Find(t => t.Count != ts[0].Count);
+            if (notSameDim != null) throw new ArgumentOutOfRangeException("All second dimensions must be same size!");
+
+            for (int i = 0; i < ts.Count; i++) {
+                for (int j = 0; j < ts[0].Count; j++) {
+                    res[i, j] = ts[i][j];
+                }
+            }
+
+            return res;
+        }
+
     }
 }

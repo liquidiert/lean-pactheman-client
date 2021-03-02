@@ -17,7 +17,7 @@ namespace lean_pactheman_client {
             try {
                 _playerInstance.UpdateState(updateVelocity.Normalize());
                 await _playerInstance.SendState();
-                return WaitRewardHandle.WaitOne();
+                return WaitRewardHandle.WaitOne(2500);
             } catch (Exception ex) {
                 Console.WriteLine(ex.ToString());
                 return false;
