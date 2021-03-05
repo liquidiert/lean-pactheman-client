@@ -8,7 +8,7 @@ namespace lean_pactheman_client {
 
         public MoveAdapter() {
             // exchange SimpleMoveExample with your own implementation here
-            moveInstructor = new DQN.DQN();
+            moveInstructor = new SimpleMoveExample();
         }
 
         public void Dispose() => Dispose(true);

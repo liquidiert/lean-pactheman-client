@@ -1,4 +1,4 @@
-using static Tensorflow.Binding;
+/* using static Tensorflow.Binding;
 using Tensorflow;
 using NumSharp;
 using System;
@@ -101,4 +101,4 @@ namespace lean_pactheman_client.DQN {
             clydePosition_Y = (int)gPositions["clyde"].Y;
         }
     }
-}
+} */

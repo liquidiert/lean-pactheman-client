@@ -1,0 +1,8 @@
+[opcode(0x9)]
+struct InitState {
+    map[string, Position] ghostInitPositions;
+    map[guid, Position] playerInitPositions;
+    Position[] scorePointInitPositions;
+    map[guid, int64] playerInitScores;
+    map[guid, int64] playerInitLives;
+}

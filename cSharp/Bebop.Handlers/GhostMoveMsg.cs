@@ -9,7 +9,7 @@ namespace lean_pactheman_client {
     public static class GhostMoveHandler {
 
         public static event EventHandler GhostMoveEvent;
-        public static void SignalPlayerState(GhostMoveMsg move) {
+        public static void SignalGhostMove(GhostMoveMsg move) {
             GhostMoveEvent?.Invoke(move.GhostPositions, new EventArgs());
         }
 
@@ -20,7 +20,7 @@ namespace lean_pactheman_client {
                     GameState.Instance.GhostPositions
                         .AddOrUpdate(pos.Key, (id) => (Position)pos.Value, (id, p) => (Position)pos.Value);
                 }
-                GhostMoveHandler.SignalPlayerState(msg);
+                GhostMoveHandler.SignalGhostMove(msg);
             } catch (Exception ex) {
                 Console.WriteLine(ex.ToString());
             }

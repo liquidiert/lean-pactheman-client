@@ -1,38 +1,14 @@
-﻿using static Tensorflow.Binding;
-using System;
+﻿using System;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using CommandLine;
+using TorchSharp;
+using TorchSharp.Tensor;
 using PacTheMan.Models;
-using NumSharp;
-using Tensorflow;
 
 namespace lean_pactheman_client {
-
-    public class Test {
-        Session sess { get; set; }
-
-        public void RunAThing() {
-            var res = new NDArray(np.float32, new Shape(new int[] { 10 }));
-            res[0] = 2f;
-            res[1] = 1f;
-            res[2] = 3f;
-            Console.WriteLine((float)res[0]);
-
-            var tensor = tf.constant(new float[] { 1f, 2f, 3f, 8f, 5f, 6f, 7f });
-            var maxVal = sess.run(tf.argmax(tensor));
-
-            Console.WriteLine((int)maxVal.GetInt64(0));
-        }
-
-        public Test() {
-            var init = tf.global_variables_initializer();
-            sess = tf.Session();
-            sess.run(init);
-        }
-    }
 
     class Program {
 
@@ -56,14 +32,6 @@ namespace lean_pactheman_client {
                 Console.WriteLine("Couldn't parse arguments");
                 Environment.Exit(-1);
             }
-
-            //tf.enable_eager_execution();
-
-            /* var t = new Test();
-            t.RunAThing(); */
-
-
-            //Environment.Exit(0);
 
             // initialization
 

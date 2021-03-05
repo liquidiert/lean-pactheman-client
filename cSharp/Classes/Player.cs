@@ -164,6 +164,7 @@ namespace lean_pactheman_client {
                 LevelCount = levelCount,
                 GameCount = gameCount
             };
+            
             var netMsg = new NetworkMessage {
                 IncomingOpCode = JoinMsg.OpCode,
                 IncomingRecord = joinMsg.EncodeAsImmutable()
