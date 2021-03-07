@@ -58,7 +58,6 @@ class Velocity {
   }
 
   // operators
-
   Velocity operator +(Velocity other) {
     x += other.x;
     y += other.y;

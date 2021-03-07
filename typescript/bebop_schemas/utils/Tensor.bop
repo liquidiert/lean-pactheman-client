@@ -1,0 +1,5 @@
+struct TensorSave {
+    string name;
+    float32[] values;
+    int32[] shape;
+}

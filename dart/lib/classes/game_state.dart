@@ -87,7 +87,7 @@ class GameState {
     gameOverStreamController.add(msg);
   }
 
-  PlayerState sendablePlayerState() {
+  PlayerState get sendablePlayerState {
     var res = playerState;
     res.session = session;
     return res;

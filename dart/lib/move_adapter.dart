@@ -11,6 +11,6 @@ class MoveAdapter {
     moveInstructor = SimpleExample();
   }
 
-  Tuple2<bool, Velocity> GetMove(PlayerInfo info) =>
+  Tuple2<bool, Velocity> getMove(PlayerInfo info) =>
       moveInstructor.performMove(info);
 }

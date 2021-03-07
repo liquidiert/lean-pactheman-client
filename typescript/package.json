@@ -1,0 +1,31 @@
+{
+  "name": "lean-client-ts",
+  "version": "0.0.1",
+  "description": "pactheman lean client in typescript",
+  "main": "src/index.ts",
+  "repository": "https://github.com/liquidiert/lean-pactheman-client",
+  "author": "Korbinian Habereder",
+  "license": "MIT",
+  "scripts": {
+    "start": "ts-node -r tsconfig-paths/register src/index.ts",
+    "compile-bebop": "bebopc"
+  },
+  "dependencies": {
+    "@tensorflow/tfjs-node": "^3.2.0",
+    "@tensorflow/tfjs-node-gpu": "^3.2.0",
+    "async-completer": "^1.0.0",
+    "bebop": "^2.1.4",
+    "lodash": "^4.17.21",
+    "strongly-typed-events": "^2.1.2",
+    "ws": "^7.4.3",
+    "yargs": "^16.2.0"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.168",
+    "@types/ws": "^7.4.0",
+    "@types/yargs": "^16.0.0",
+    "bebop-tools": "^2.1.4",
+    "tsconfig-paths": "^3.9.0",
+    "typescript": "^4.2.3"
+  }
+}

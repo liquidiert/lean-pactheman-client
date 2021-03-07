@@ -7,7 +7,7 @@ class ErrorMsgHandler extends BebopHandler {
   @override
   void handleMessage(sender, message) {
     message = ErrorMsg.decode(message);
-    print('Received {msg.ErrorMessage} violation. ');
+    print('Received ${message.errorMessage} violation. ');
     GameState.instance.strikeCount++;
     print('Watch out this is your ${GameState.instance.strikeCount} strike. ');
     print(

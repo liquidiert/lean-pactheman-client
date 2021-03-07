@@ -32,7 +32,7 @@ packages:
   bebop_dart:
     dependency: "direct main"
     description:
-      path: "/home/secretone/git_repos/uni/lean-pactheman-client/dart/bebop_dart"
+      path: "/home/secretone/git_repos/uni/lean-pactheman-client/dart/custom_packages/bebop_dart"
       relative: false
     source: path
     version: "0.1.0"
@@ -92,6 +92,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "6.1.0"
+  fixnum:
+    dependency: transitive
+    description:
+      name: fixnum
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.10.11"
   glob:
     dependency: transitive
     description:
@@ -190,6 +197,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.5.0"
+  protobuf:
+    dependency: transitive
+    description:
+      name: protobuf
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.13.16+1"
   pub_semver:
     dependency: transitive
     description:
@@ -274,6 +288,20 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.0"
+  symbol_table:
+    dependency: transitive
+    description:
+      name: symbol_table
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.0"
+  tensorflow:
+    dependency: "direct main"
+    description:
+      path: "/home/secretone/git_repos/uni/lean-pactheman-client/dart/custom_packages/tensorflow.dart-master"
+      relative: false
+    source: path
+    version: "0.0.0"
   term_glyph:
     dependency: transitive
     description:

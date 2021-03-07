@@ -128,7 +128,7 @@ class Player {
 
   void sendState() {
     send(PlayerState.opcode,
-        PlayerState.encode(GameState.instance.sendablePlayerState()));
+        PlayerState.encode(GameState.instance.sendablePlayerState));
   }
 
   void move() {
@@ -137,7 +137,7 @@ class Player {
     Tuple2<bool, Velocity> move;
 
     try {
-      move = _moveAdapter.GetMove(PlayerInfo(this));
+      move = _moveAdapter.getMove(PlayerInfo(this));
     } catch (ex) {
       print(ex);
     } finally {

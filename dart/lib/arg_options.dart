@@ -5,7 +5,7 @@ void addArgOptions(ArgParser parser) {
   parser.addFlag('host',
       negatable: false,
       help:
-          'Decide wheter to host or join a session; if not given client ask for session to join');
+          'Decide wheter to host or join a session; if not given client asks for session to join');
   parser.addFlag('log',
       negatable: false, help: 'Wheter the lean client should log game data');
   parser.addOption('game-count',

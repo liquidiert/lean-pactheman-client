@@ -6,13 +6,10 @@ import 'package:lean_dart_client/classes/game_state.dart';
 import 'package:lean_dart_client/classes/player.dart';
 import 'package:lean_dart_client/classes/player_mediator.dart';
 import 'package:lean_dart_client/schemas.g.dart';
-import 'package:lean_dart_client/utils/map_reader.dart';
 
 void main(List<String> arguments) async {
   // init bebop handlers
   await BebopDispatcher.instance.initialize();
-
-  var t = MapReader.instance;
 
   // parse args
   var parser = ArgParser();
