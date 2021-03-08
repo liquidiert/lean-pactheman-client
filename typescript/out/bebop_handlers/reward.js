@@ -9,6 +9,8 @@ const pactheman_models_1 = require("../models/pactheman.models");
 class RewardMsgHandler {
     handleMessage(sender, message) {
         message = pactheman_models_1.RewardMsg.decode(message);
+        if (message.reward !== 0)
+            console.log(`reward: ${message.reward}`);
         gameState_1.default.Instance.gainedRewardAndNewState = message;
         playerMediator_1.default.completeInitFuture();
         gameState_1.default.Instance.signalReward(message);

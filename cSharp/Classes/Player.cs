@@ -32,7 +32,7 @@ namespace lean_pactheman_client {
         private bool _disposed = false;
         private WebSocket _socket;
         private MoveAdapter _moveAdapter;
-        public float MovementSpeed { get => 350f; }
+        public float MovementSpeed { get => 1350f; } // 350
         public Position StartPosition { get; set; }
         public Position Position {
             get => (Position)GameState.Instance.PlayerState.PlayerPositions[(Guid)GameState.Instance.Session.ClientId] ?? new Position();

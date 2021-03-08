@@ -32,10 +32,19 @@ class Player {
         this._socket = null;
         this._moveAdapter = null;
         this._connected = false;
-        this.movementSpeed = 350.0;
+        this.movementSpeed = 1350.0; // 350
         this.startPosition = null;
         this.name = name;
         this._moveAdapter = new moveAdapter_1.default();
+        gameState_1.default.Instance.onReset.subscribe((resetMsg) => {
+            this.position = this.startPosition ?? new positionExtensions_1.default(0, 0);
+        });
+        gameState_1.default.Instance.onNewLevel.subscribe(() => {
+            this.position = this.startPosition ?? new positionExtensions_1.default(0, 0);
+        });
+        gameState_1.default.Instance.onNewGame.subscribe((newGameMsg) => {
+            this.startPosition = this.position = positionExtensions_1.default.fromPosition(newGameMsg.resetMsg?.playerResetPoints.get(gameState_1.default.Instance.session.clientId ?? "") ?? { x: 0, y: 0 });
+        });
     }
     get position() {
         return positionExtensions_1.default.fromPosition(gameState_1.default.Instance.playerState.playerPositions

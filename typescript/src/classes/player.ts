@@ -1,4 +1,4 @@
-import { ISessionMsg, NetworkMessage, JoinMsg, ReadyMsg, PlayerState } from "../models/pactheman.models";
+import { ISessionMsg, NetworkMessage, JoinMsg, ReadyMsg, PlayerState, INewGameMsg } from "../models/pactheman.models";
 import MoveAdapter from "../moveAdapter";
 import WebSocket from "ws";
 import GameState from "./gameState";
@@ -33,7 +33,7 @@ export default class Player {
     private _connected: boolean = false;
     name: string;
 
-    movementSpeed: number = 350.0;
+    movementSpeed: number = 1350.0; // 350
     startPosition: PositionExtended | null = null;
 
     get position(): PositionExtended {
@@ -48,6 +48,16 @@ export default class Player {
     constructor(name: string) {
         this.name = name;
         this._moveAdapter = new MoveAdapter();
+
+        GameState.Instance.onReset.subscribe((resetMsg) => {
+            this.position = this.startPosition ?? new PositionExtended(0, 0);
+        });
+        GameState.Instance.onNewLevel.subscribe(() => {
+            this.position = this.startPosition ?? new PositionExtended(0, 0);
+        });
+        GameState.Instance.onNewGame.subscribe((newGameMsg: INewGameMsg) => {
+            this.startPosition = this.position = PositionExtended.fromPosition(newGameMsg.resetMsg?.playerResetPoints.get(GameState.Instance.session.clientId ?? "") ?? { x: 0, y: 0 });
+        });
     }
 
     updatePosition({ x = 0, xFactor = 1, y = 0, yFactor = 1 }: { x?: number, xFactor?: number, y?: number, yFactor?: number }): PositionExtended {

@@ -47,13 +47,13 @@ export default class Velocity {
     }
 
     toMovingState(): MovingState {
-        if (this == Velocity.fromXY(-1, 0)) {
+        if (this.x == -1 && this.y == 0) {
             return MovingState.Left;
-        } else if (this == Velocity.fromXY(1, 0)) {
+        } else if (this.x == 1 && this.y == 0) {
             return MovingState.Right;
-        } else if (this == Velocity.fromXY(0, -1)) {
+        } else if (this.x == 0 && this.y == -1) {
             return MovingState.Up;
-        } else if (this == Velocity.fromXY(0, 1)) {
+        } else if (this.x == 0 && this.y == 1) {
             return MovingState.Down;
         } else {
             return MovingState.Up;

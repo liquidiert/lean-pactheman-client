@@ -24,6 +24,7 @@ namespace lean_pactheman_client {
 
         public event EventHandler ResetEvent;
         public void SignalReset(ResetMsg msg) {
+            ScorePointState.ScorePointPositions = new ConcurrentBag<Position>();
             ResetEvent?.Invoke(msg, new EventArgs());
         }
 
@@ -40,6 +41,7 @@ namespace lean_pactheman_client {
 
         public event EventHandler NewLevelEvent;
         public void SignalNewLevel() {
+            ScorePointState.ScorePointPositions = new ConcurrentBag<Position>();
             NewLevelEvent?.Invoke(this, new EventArgs());
         }
 
@@ -51,6 +53,7 @@ namespace lean_pactheman_client {
             foreach (var p in msg.PlayerResetPoints) {
                 PlayerState.PlayerPositions.AddOrUpdate(p.Key, pp => (Position)p.Value, (k,pp) => (Position)p.Value);
             }
+            ScorePointState.ScorePointPositions = new ConcurrentBag<Position>();
             NewGameEvent?.Invoke(this, new NewGameEventArgs(msg));
         }
 

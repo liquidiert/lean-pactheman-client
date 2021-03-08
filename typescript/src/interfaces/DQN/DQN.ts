@@ -31,6 +31,12 @@ class ExperienceBuffer {
         this.buffer.push(exp);
     }
 
+    remove(howMany: number) {
+        for (let i = 0; i < howMany; i++) {
+            this.buffer.shift();
+        }
+    }
+
     sample(batchSize: number): Experience[] {
         return cloneDeep(sampleSize(this.buffer, batchSize));
     }
@@ -41,11 +47,11 @@ export default class DQN extends IMove {
     GAMMA = 0.9;
     ALPHA = 0.01;
     EPSILON_START = 1.0;
-    EPSILON_FINAL = 0.02;
-    EPSILON_DECAY = 1e3;
-    BUFFER_SIZE = 300;
+    EPSILON_FINAL = 0.6;
+    EPSILON_DECAY = 1e4;
+    BUFFER_SIZE = 1000;
     BATCH_SIZE = 32;
-    SYNC_NETS = 250;
+    SYNC_NETS = 500;
 
     totalReward = 0;
     totalRewards: number[] = [];
@@ -53,18 +59,39 @@ export default class DQN extends IMove {
     frameId = 0;
 
     expBuffer: ExperienceBuffer;
-    net: tf.Sequential;
+    net: tf.Sequential | tf.LayersModel | null = null;
     targetNet: tf.LayersModel | null = null;
     optimizer: tf.AdamOptimizer = tf.train.adam(this.ALPHA);
+    lastAction: MovingState | null = null;
 
     constructor() {
         super();
         this.expBuffer = new ExperienceBuffer(this.BUFFER_SIZE);
-        this.net = model;
+        this.setNets();
+        GameState.Instance.onReset.subscribe(this._reset);
+        GameState.Instance.onNewLevel.subscribe(this._reset);
+        GameState.Instance.onNewGame.subscribe(this._reset);
+
+        // save model on close
+        GameState.Instance.onGameOver.subscribe(async () => await this.saveModel());
+    }
+
+    async setNets() {
+        let saves = fs.readdirSync("src/interfaces/DQN/saves");
+        if (saves.length != 0 && saves.includes("model.json")) {
+            this.net = await tf.loadLayersModel("file://src/interfaces/DQN/saves/model.json");
+            console.log("loaded net from saved model");
+        } else if (fs.readdirSync("src/interfaces/DQN/saves/old").length != 0) {
+            this.net = await tf.loadLayersModel("file://src/interfaces/DQN/saves/old/model.json");
+            console.log("loaded net from old model");
+        } else {
+            this.net = model;
+        }
         this.syncWeights();
     }
 
     private _reset() {
+        this.epsilon = this.EPSILON_START
         this.totalReward = 0;
     }
 
@@ -75,17 +102,21 @@ export default class DQN extends IMove {
         if (Math.random() < epsilon) {
             actionToTake = sample(Constants.ACTION_SPACE) ?? MovingState.Up;
         } else {
-            let qVals = this.net.predict(input.asTensor) as tf.Tensor;
+            let qVals = this.net?.predict(input.asTensor) as tf.Tensor;
             let maxValIndx = qVals.argMax(1).arraySync();
             actionToTake = Constants.ACTION_SPACE[maxValIndx as number];
-            console.log(`choose optimal action: ${actionToTake}`)
+            if (this.lastAction !== actionToTake) console.log(`choose optimal action: ${actionToTake}`);
         }
+
+        this.lastAction = actionToTake;
 
         await PlayerMediator.receivePlayerStateUpdate(Velocity.fromMovingState(actionToTake));
         var result = GameState.Instance.gainedRewardAndNewState;
 
         if (result == null) return null;
-        console.log(`received reward: ${result.reward}`);
+        if (result.reward ?? 0 > 0) {
+            console.log(`received reward: ${result.reward}`);
+        }
 
         this.totalReward += result.reward ?? 0;
         this.expBuffer.add({
@@ -115,17 +146,17 @@ export default class DQN extends IMove {
         let rewards = samples.map(s => s.r);
         let dones = tf.tensor(samples.map(s => s.d));
 
+        // get values for next states from target net
+        let nextStateValues = (this.targetNet?.predict(tf.tensor(nextStates, [this.BATCH_SIZE, 10])) as tf.Tensor<tf.Rank>).max(1, true);
+
         this.optimizer.minimize(() => {
 
             // prediction
-            let forward = this.net.predict(tf.tensor(states, [this.BATCH_SIZE, 10])) as tf.Tensor<tf.Rank>;
+            let forward = this.net?.predict(tf.tensor(states, [this.BATCH_SIZE, 10])) as tf.Tensor<tf.Rank>;
 
             // gather values for taken actions; a little hack cause tf can't gather in specific dimension, only in different axes
             let stateActionValues = forward.gather(actions, 1).slice([0, 0], [1, this.BATCH_SIZE]).reshape([this.BATCH_SIZE, 1]);
-            
-            // get values for next states from target net
-            let nextStateValues = (this.targetNet?.predict(tf.tensor(nextStates, [this.BATCH_SIZE, 10])) as tf.Tensor<tf.Rank>).max(1, true);
-            
+
             // bellman approx
             let expectedStateActionValues = nextStateValues.mul(this.GAMMA).add(rewards);
 
@@ -135,10 +166,29 @@ export default class DQN extends IMove {
     }
 
     async syncWeights() {
-        await this.net.save("file://out/interfaces/DQN/saves/weights");
+        await this.net?.save("file://out/interfaces/DQN/saves/weights");
         this.targetNet = await tf.loadLayersModel("file://out/interfaces/DQN/saves/weights/model.json");
         fs.rmdirSync("out/interfaces/DQN/saves/weights", { recursive: true });
         console.log("synced weights");
+    }
+
+    async saveModel() {
+        console.log("saving net");
+        try {
+            fs.rmSync("src/interfaces/DQN/saves/old/model.json");
+            fs.rmSync("src/interfaces/DQN/saves/old/weights.bin");
+        } catch (ex) {
+            // swallow
+            try {
+                fs.renameSync("src/interfaces/DQN/saves/model.json", "src/interfaces/DQN/saves/old/model.json");
+                fs.renameSync("src/interfaces/DQN/saves/weights.bin", "src/interfaces/DQN/saves/old/weights.bin");
+            } catch (ex) {
+                // swallow
+            }
+        }
+        await this.net?.save("file://src/interfaces/DQN/saves/");
+        console.log("saved net");
+        process.exit(0);
     }
 
     calcTotalMean() {
@@ -147,8 +197,9 @@ export default class DQN extends IMove {
 
     async performMoveAsync(info: PlayerInfo) {
         this.frameId++;
-        this.epsilon = this.EPSILON_FINAL > this.EPSILON_START - this.frameId / this.EPSILON_DECAY ? this.EPSILON_FINAL : this.EPSILON_START - this.frameId / this.EPSILON_DECAY;
-        console.log(`epsilon: ${this.epsilon}`);
+        this.epsilon = this.EPSILON_FINAL > this.EPSILON_START - this.frameId / this.EPSILON_DECAY ?
+            this.EPSILON_FINAL : this.EPSILON_START - this.frameId / this.EPSILON_DECAY;
+        // console.log(`epsilon: ${this.epsilon}`);
 
         let reward = await this.chooseAction(new InputVector(), this.epsilon);
 
@@ -159,6 +210,7 @@ export default class DQN extends IMove {
         }
 
         if (this.expBuffer.length < this.BUFFER_SIZE) return;
+        this.expBuffer.remove(100);
 
         if (this.frameId % this.SYNC_NETS == 0) this.syncWeights();
 

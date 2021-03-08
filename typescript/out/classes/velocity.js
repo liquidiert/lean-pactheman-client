@@ -43,16 +43,16 @@ class Velocity {
         return new Velocity(this.x, this.y);
     }
     toMovingState() {
-        if (this == Velocity.fromXY(-1, 0)) {
+        if (this.x == -1 && this.y == 0) {
             return pactheman_models_1.MovingState.Left;
         }
-        else if (this == Velocity.fromXY(1, 0)) {
+        else if (this.x == 1 && this.y == 0) {
             return pactheman_models_1.MovingState.Right;
         }
-        else if (this == Velocity.fromXY(0, -1)) {
+        else if (this.x == 0 && this.y == -1) {
             return pactheman_models_1.MovingState.Up;
         }
-        else if (this == Velocity.fromXY(0, 1)) {
+        else if (this.x == 0 && this.y == 1) {
             return pactheman_models_1.MovingState.Down;
         }
         else {
