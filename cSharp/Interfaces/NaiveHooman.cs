@@ -23,9 +23,12 @@ namespace lean_pactheman_client {
         }
 
         public NaiveHooman() {
+            GameState.Instance.NewGameEvent += _reset;
             GameState.Instance.NewLevelEvent += _reset;
             GameState.Instance.ResetEvent += _reset;
         }
+
+        public void Dispose() {}
 
         Position GetAlternativeFromBFS(Position currentPos, List<Position> positionsToAvoid) {
 
@@ -108,23 +111,26 @@ namespace lean_pactheman_client {
                 }
             } else { // no ghosts detected
                 if (fleeMemory.Count > 0) fleeMemory.Clear();
+
                 // only change target if none is set or we are close enough
-                if (target == null || target.IsEqualUpToRange(playerInfo.Position, 5f)) {
+                if (target == null || target.IsEqualUpToRange(playerInfo.Position, 16f)) {
                     Console.Write("Getting new target ");
 
-                    if (targetMemory.Count > 0) { // if we have A* path memory
+
+                    if (targetMemory?.Count > 0) { // if we have A* path memory
                         target = targetMemory.Pop().Multiply(64);
                         Console.WriteLine("from memory");
                     } else {
                         Console.WriteLine("from new path");
                         var reachableTarget = GameState.Instance.ScorePointState.ScorePointPositions
-                            .FirstOrDefault(sp => playerInfo.Position.ManhattanDistance(sp.Copy().Downscaled()) < 65);
+                            .FirstOrDefault(sp => playerInfo.Position.ManhattanDistance(sp.Copy().Add(32)) < 65);
 
                         if (reachableTarget == null) {
                             var possibleTargets = GameState.Instance.ScorePointState.ScorePointPositions
                                 .Select(sp => new DistanceWrapper(playerInfo.Position.ManhattanDistance(sp.Copy().Add(32)), sp)).ToList();
                             possibleTargets.Sort((dist1, dist2) => (int)(dist1.Distance - dist2.Distance));
 
+                            if (possibleTargets.Count == 0)return (true, new Velocity(target?.Copy().SubOther(playerInfo.Position) ?? playerInfo.Position));
                             // search a path to the closest one via A*
                             targetMemory = AStar.GetPath(
                                 playerInfo.DownScaledPosition,
@@ -141,8 +147,11 @@ namespace lean_pactheman_client {
                                 positionsToIgnore: GameState.Instance.GhostPositions.Select(g => g.Value.Downscaled()).ToList()
                             );
                         }
-
-                        target = targetMemory.Pop().Multiply(64);
+                        try {
+                            target = targetMemory.Pop().Multiply(64);
+                        } catch {
+                            // swallow
+                        }
                     }
                     lastTarget = target?.Add(32);
                 }

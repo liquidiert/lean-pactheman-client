@@ -1,10 +1,12 @@
+using System;
+
 namespace lean_pactheman_client {
 
     /// <summary>
     /// The base interface for communication with the server / player instance.<br/>
     /// IMove must be implemented by any ai interface.
     /// </summary>
-    public interface IMove {
+    public interface IMove : IDisposable {
         /// <summary>
         /// A default implementation for ai interfaces that only use PerformMoveAsync.
         /// Other interfaces have to override this method.

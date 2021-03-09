@@ -43,7 +43,12 @@ namespace lean_pactheman_client {
             var selfPos = BehaviorTreeAI.Info.Position;
             var fleeDirection = new Velocity(selfPos.Copy().SubOther(GameState.Instance.GhostPositions[ghostName])).Normalize();
             var updatePos = selfPos.Copy().AddOther(fleeDirection.Copy().Multiply(128).ToPosition()).Downscaled();
-            var fleePositions = (MapReader.Instance.Map.GetRegion(updatePos, 3) as Tuple<Position, int>[,]).Where(t => t.Item2 == 0).Select(t => t.Item1).ToList();
+            List<Position> fleePositions;
+            try {
+                fleePositions = (MapReader.Instance.Map.GetRegion(updatePos, 3) as Tuple<Position, int>[,]).Where(t => t.Item2 == 0).Select(t => t.Item1).ToList();
+            } catch {
+                return false;
+            }
             if (fleePositions.Any()) {
                 var targets = AStar.GetPath(
                     selfPos.Copy().Downscaled(),
@@ -69,13 +74,19 @@ namespace lean_pactheman_client {
         };
 
         public RandomFleeAction(string name) => ghostName = name;
+
         public override bool Run() {
             var selfPos = BehaviorTreeAI.Info.Position;
             var ghostDirection = new Velocity(GameState.Instance.GhostPositions[ghostName].Copy().SubOther(selfPos)).Normalize();
             randomVelocities.Remove(ghostDirection);
             foreach (var v in randomVelocities) {
                 var updatePos = selfPos.Copy().AddOther(v.Copy().Multiply(128).ToPosition()).Downscaled();
-                var fleePositions = (MapReader.Instance.Map.GetRegion(updatePos, 3) as Tuple<Position, int>[,]).Where(t => t.Item2 == 0).Select(t => t.Item1).ToList();
+                List<Position> fleePositions;
+                try {
+                    fleePositions = (MapReader.Instance.Map.GetRegion(updatePos, 3) as Tuple<Position, int>[,]).Where(t => t.Item2 == 0).Select(t => t.Item1).ToList();
+                } catch {
+                    continue;
+                }
                 if (fleePositions.Any()) {
                     var targets = AStar.GetPath(
                         selfPos.Copy().Downscaled(),
@@ -103,7 +114,7 @@ namespace lean_pactheman_client {
                 possibleTargets[0].Pos.Downscaled(),
                 iterDepth: 8
             );
-            if (targets == null) return false;
+            if (targets == null || targets.Count == 0) return false;
             var updatePos = targets.Pop();
             if (MapReader.Instance.IsValidPosition(updatePos)) {
                 BehaviorTreeAI.ResultVelocity = new Velocity(updatePos.Multiply(64).Add(32).SubOther(selfPos));
@@ -121,6 +132,8 @@ namespace lean_pactheman_client {
         static bool calcDistance(string toWhom) {
             return Info.Position.ManhattanDistance(GameState.Instance.GhostPositions[toWhom]) < 192;
         }
+
+        public void Dispose() {}
 
         public BehaviorTreeAI() {
             var selectRandomDirection = new RandomSelector {

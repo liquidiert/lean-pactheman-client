@@ -1,0 +1,9 @@
+{
+    "inputDirectory": "bebop_schemas",
+    "generators": [
+        {
+          "alias": "ts",
+          "outputFile": "models/pactheman.models.ts"
+        }
+      ]
+}

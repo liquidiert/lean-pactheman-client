@@ -1,0 +1,35 @@
+{
+    "configurations": [
+        {
+            // A name for the launch config. This will show in the dropdown on the Run side bar.
+            "name": "lean client",
+            // This should always be "dart" for Dart/Flutter apps.
+            // This selects the Dart debugger.
+            "type": "dart",
+            // This can be "launch" to start an app, or "attach" to attach to an existing app.
+            "request": "launch",
+            // The entry script to execute when running the app.
+            // Set to a "web" in a Dart web app to run in web move.
+            // Set to "test" in an app with tests to run all tests.
+            "program": "bin/lean_dart_client.dart",
+            // Any custom environment variables to set when running the app with this
+            // launch config.
+            "env": {
+                "RELEASE_MODE": true
+            },
+            // Arguments to be passed to the Dart or Flutter app.
+            "args": [
+                "--playername", "agatha"
+            ],
+            // "debugConsole" or "terminal". If set to "terminal", will run in the built-in
+            // terminal and will support reading from `stdin`. However some other debug
+            // features may be limited.
+            "console": "terminal",
+            // Allows running Flutter tests on a real device instead of the default headless
+            // flutter-tester device.
+            "runTestsOnDevice": false,
+            // If codeLens is defined, this launch configuration can be launched from custom
+            // CodeLens links in the editor (see the page linked above for more info).
+        }
+    ]
+}

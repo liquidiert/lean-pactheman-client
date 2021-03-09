@@ -1,0 +1,4 @@
+struct LevelData {
+    TimeStepData[] timeSteps;
+    string winner;
+}

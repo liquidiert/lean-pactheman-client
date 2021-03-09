@@ -4,23 +4,21 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using CommandLine;
+using TorchSharp;
+using TorchSharp.Tensor;
 using PacTheMan.Models;
 
 namespace lean_pactheman_client {
 
-    public static class Constants {
-        public const float FRAME_DELTA_APPROX = 0.0167f;
-        public const int MAX_STRIKE_COUNT = 3;
-    }
     class Program {
 
-        static Player player;
+        static Player player { get; set; }
         static float RESET_COUNTER = 0f;
         public static EventWaitHandle WaitHandle = new AutoResetEvent(false);
         static Options options;
         static GameDataSaver saver;
         public static bool GameOver = false;
-        
+
         public static void SetResetCounter(float counter) {
             RESET_COUNTER = counter;
         }
@@ -34,7 +32,7 @@ namespace lean_pactheman_client {
                 Console.WriteLine("Couldn't parse arguments");
                 Environment.Exit(-1);
             }
-            
+
             // initialization
 
             IPAddress ipAddress;
@@ -45,28 +43,29 @@ namespace lean_pactheman_client {
 
             GameState.Instance.Init();
 
-            player = new Player(options.PlayerName);
-            PlayerMediator.SetPlayer(player);
-            await player.Connect(options.Ip, options.Port);
+            using (player = new Player(options.PlayerName)) {
+                PlayerMediator.SetPlayer(player);
+                await player.Connect(options.Ip, options.Port);
 
-            if (!options.Host) {
-                Console.WriteLine("Enter session id:");
-                var sessionId = Console.ReadLine();
-                GameState.Instance.Session = new SessionMsg {
-                    SessionId = sessionId
-                };
-                await player.Join();
-            } else {
-                await player.Host(options.LevelCount, options.GameCount);
-            }
+                if (!options.Host) {
+                    Console.WriteLine("Enter session id:");
+                    var sessionId = Console.ReadLine();
+                    GameState.Instance.Session = new SessionMsg {
+                        SessionId = sessionId
+                    };
+                    await player.Join();
+                } else {
+                    await player.Host(options.LevelCount, options.GameCount);
+                }
 
-            if (options.LogGameData) {
-                // use dispose pattern if logging gamedata
-                using (saver = new GameDataSaver()) {
+                if (options.LogGameData) {
+                    // use dispose pattern if logging gamedata
+                    using (saver = new GameDataSaver()) {
+                        await GameLoop();
+                    }
+                } else {
                     await GameLoop();
                 }
-            } else {
-                await GameLoop();
             }
 
         }

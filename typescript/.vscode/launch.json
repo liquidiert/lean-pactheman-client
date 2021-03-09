@@ -1,0 +1,19 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "lean ts client",
+        "type": "node",
+        "request": "launch",
+        "runtimeExecutable": "ts-node",
+        "runtimeArgs": ["-r", "tsconfig-paths/register"],
+  
+        "args": ["src/index.ts", "--playername", "a"],
+        "console": "integratedTerminal",
+        
+        "cwd": "${workspaceRoot}",
+        "internalConsoleOptions": "openOnSessionStart",
+        "skipFiles": ["<node_internals>/**", "node_modules/**"]
+      }
+    ]
+  }
