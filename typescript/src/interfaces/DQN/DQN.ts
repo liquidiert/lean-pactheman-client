@@ -166,6 +166,7 @@ export default class DQN extends IMove {
     }
 
     async syncWeights() {
+        fs.mkdirSync("out/interfaces/DQN/saves/weights");
         await this.net?.save("file://out/interfaces/DQN/saves/weights");
         this.targetNet = await tf.loadLayersModel("file://out/interfaces/DQN/saves/weights/model.json");
         fs.rmdirSync("out/interfaces/DQN/saves/weights", { recursive: true });
