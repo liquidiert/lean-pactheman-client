@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Position = exports.MovingState = exports.GameOverReason = exports.PlayerJoinedMsg = exports.ReadyMsg = exports.ReconnectMsg = exports.ExitMsg = exports.NewGameMsg = exports.ErrorMsg = exports.RewardMsg = exports.JoinMsg = exports.GameOverMsg = exports.GhostMoveMsg = exports.ResetMsg = exports.NewLevelMsg = exports.GameData = exports.TensorSave = exports.TimeStepData = exports.LevelData = exports.ModelSave = exports.InitState = exports.PlayerState = exports.GhostAlgorithms = exports.NetworkMessage = exports.SessionMsg = void 0;
+exports.Position = exports.MovingState = exports.GameOverReason = exports.PlayerJoinedMsg = exports.ReadyMsg = exports.ReconnectMsg = exports.ExitMsg = exports.NewGameMsg = exports.ErrorMsg = exports.RewardMsg = exports.StrikeMsg = exports.JoinMsg = exports.GameOverMsg = exports.GhostMoveMsg = exports.ResetMsg = exports.NewLevelMsg = exports.GameData = exports.TensorSave = exports.TimeStepData = exports.LevelData = exports.ModelSave = exports.InitState = exports.PlayerState = exports.GhostAlgorithms = exports.NetworkMessage = exports.SessionMsg = void 0;
 const bebop_1 = require("bebop");
 exports.SessionMsg = {
     opcode: 0x2,
@@ -854,6 +854,39 @@ exports.JoinMsg = {
                     return message;
             }
         }
+    },
+};
+exports.StrikeMsg = {
+    opcode: 0x16,
+    encode(message) {
+        const view = bebop_1.BebopView.getInstance();
+        view.startWriting();
+        this.encodeInto(message, view);
+        return view.toArray();
+    },
+    encodeInto(message, view) {
+        view.writeGuid(message.playerId);
+        view.writeString(message.reason);
+        view.writeInt32(message.strikeCount);
+    },
+    decode(buffer) {
+        const view = bebop_1.BebopView.getInstance();
+        view.startReading(buffer);
+        return this.readFrom(view);
+    },
+    readFrom(view) {
+        let field0;
+        field0 = view.readGuid();
+        let field1;
+        field1 = view.readString();
+        let field2;
+        field2 = view.readInt32();
+        let message = {
+            playerId: field0,
+            reason: field1,
+            strikeCount: field2,
+        };
+        return message;
     },
 };
 exports.RewardMsg = {

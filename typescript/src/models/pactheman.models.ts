@@ -1020,6 +1020,49 @@ export const JoinMsg = {
   },
 };
 
+export interface IStrikeMsg {
+  playerId: string;
+  reason: string;
+  strikeCount: number;
+}
+
+export const StrikeMsg = {
+  opcode: 0x16,
+  encode(message: IStrikeMsg): Uint8Array {
+    const view = BebopView.getInstance();
+    view.startWriting();
+    this.encodeInto(message, view);
+    return view.toArray();
+  },
+
+  encodeInto(message: IStrikeMsg, view: BebopView): void {
+      view.writeGuid(message.playerId);
+      view.writeString(message.reason);
+      view.writeInt32(message.strikeCount);
+  },
+
+  decode(buffer: Uint8Array): IStrikeMsg {
+    const view = BebopView.getInstance();
+    view.startReading(buffer);
+    return this.readFrom(view);
+  },
+
+  readFrom(view: BebopView): IStrikeMsg {
+    let field0: string;
+    field0 = view.readGuid();
+    let field1: string;
+    field1 = view.readString();
+    let field2: number;
+    field2 = view.readInt32();
+    let message: IStrikeMsg = {
+      playerId: field0,
+      reason: field1,
+      strikeCount: field2,
+    };
+    return message;
+  },
+};
+
 export interface IRewardMsg {
   reward?: number;
   done?: boolean;

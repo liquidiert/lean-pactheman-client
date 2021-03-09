@@ -23,7 +23,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const iMove_1 = __importDefault(require("../../iMove"));
-const tf = __importStar(require("@tensorflow/tfjs-node"));
+const tf = __importStar(require("@tensorflow/tfjs-node-gpu"));
 const fs_1 = __importDefault(require("fs"));
 const model_1 = __importDefault(require("../PGN/model"));
 const gameState_1 = __importDefault(require("../../classes/gameState"));

@@ -16,11 +16,14 @@ const ready_1 = __importDefault(require("./ready"));
 const reset_1 = __importDefault(require("./reset"));
 const reward_1 = __importDefault(require("./reward"));
 const session_1 = __importDefault(require("./session"));
+const strikeMsg_1 = __importDefault(require("./strikeMsg"));
 class BebopHandler {
     static fromClassName(className) {
         switch (className) {
             case 'ErrorMsg':
                 return new err_1.default();
+            case 'StrikeMsg':
+                return new strikeMsg_1.default();
             case 'SessionMsg':
                 return new session_1.default();
             case 'ExitMsg':

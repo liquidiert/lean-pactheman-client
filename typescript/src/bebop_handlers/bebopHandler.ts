@@ -11,6 +11,7 @@ import ReadyMsgHandler from "./ready";
 import ResetMsgHandler from "./reset";
 import RewardMsgHandler from "./reward";
 import SessionMsgHandler from "./session";
+import StrikeMsgHandler from "./strikeMsg";
 
 export default abstract class BebopHandler {
 
@@ -18,6 +19,8 @@ export default abstract class BebopHandler {
         switch (className) {
             case 'ErrorMsg':
               return new ErrorMsgHandler();
+            case 'StrikeMsg':
+              return new StrikeMsgHandler();
             case 'SessionMsg':
               return new SessionMsgHandler();
             case 'ExitMsg':

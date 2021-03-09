@@ -47,6 +47,7 @@ namespace lean_pactheman_client {
 
         public event EventHandler NewGameEvent;
         public void SignalNewGame(ResetMsg msg) {
+            StrikeCount = 0;
             foreach (var gP in msg.GhostResetPoints) {
                 GhostPositions.AddOrUpdate(gP.Key, p => (Position)gP.Value, (k,p) => (Position)gP.Value);
             }

@@ -82,6 +82,7 @@ class GameState {
         return this._onNewGame.asEvent();
     }
     signalNewGame(msg) {
+        GameState.Instance.strikeCount = 0;
         this._onNewGame.dispatch(msg);
     }
     get onGameOver() {

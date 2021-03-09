@@ -1,6 +1,6 @@
 import { PlayerInfo } from "../../classes/player";
 import IMove, { MoveResult } from "../../iMove";
-import * as tf from "@tensorflow/tfjs-node";
+import * as tf from "@tensorflow/tfjs-node-gpu";
 import fs from "fs";
 import model from "../PGN/model";
 import GameState from "../../classes/gameState";

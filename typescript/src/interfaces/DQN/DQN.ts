@@ -4,7 +4,7 @@ import PlayerMediator from "../../classes/playerMediator";
 import InputVector from "./inputVector";
 import model from "./model";
 import fs from "fs";
-import * as tf from "@tensorflow/tfjs-node";
+import * as tf from "@tensorflow/tfjs-node-gpu";
 import { sampleSize, cloneDeep, sample } from "lodash";
 import { IPosition, MovingState } from "../../models/pactheman.models";
 import { Constants } from "../../";

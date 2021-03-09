@@ -92,6 +92,7 @@ export default class GameState {
         return this._onNewGame.asEvent();
     }
     signalNewGame(msg: INewGameMsg) {
+        GameState.Instance.strikeCount = 0;
         this._onNewGame.dispatch(msg);
     }
 
