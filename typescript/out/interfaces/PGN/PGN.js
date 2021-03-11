@@ -39,7 +39,7 @@ class PGN extends iMove_1.default {
         this.GAMMA = 0.95;
         this.LEARNING_RATE = 0.001;
         this.ENTROPY_BETA = 0.01;
-        this.BATCH_SIZE = 100;
+        this.BATCH_SIZE = 200;
         this.EPSILON_START = 1.0;
         this.EPSILON_FINAL = 0.6;
         this.EPSILON_DECAY = 1e4;
@@ -96,7 +96,8 @@ class PGN extends iMove_1.default {
         this.batchScales.push((result.reward ?? 0) - baseline);
         if (this.batchStates.length < this.BATCH_SIZE)
             return;
-        this.optimizer.minimize(() => {
+        console.log(`optimize! ${new Date().toLocaleString()}`);
+        this.optimizer.minimize(() => tf.tidy(() => {
             let logits = this.net?.predict(tf.tensor2d(this.batchStates.map(s => s.tensorlike), [this.BATCH_SIZE, 10]));
             let logProb = tf.logSoftmax(logits, 1);
             let probValues = logProb.gather(tf.tensor1d(this.batchActions, "int32"), 1).slice([0, 0], [1, this.BATCH_SIZE]).reshape([this.BATCH_SIZE, 1]);
@@ -106,10 +107,11 @@ class PGN extends iMove_1.default {
             let entropy = (prob.mul(logProb)).sum(1).mean().neg();
             let entropyLoss = entropy.mul(-this.ENTROPY_BETA);
             return lossPolicy.add(entropyLoss);
-        });
+        }));
         this.batchStates.length = 0;
         this.batchActions.length = 0;
         this.batchScales.length = 0;
+        console.log("cleared buffers");
     }
     async saveModel() {
         console.log("saving net");

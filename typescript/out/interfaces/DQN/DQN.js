@@ -157,6 +157,7 @@ class DQN extends iMove_1.default {
         });
     }
     async syncWeights() {
+        fs_1.default.mkdirSync("out/interfaces/DQN/saves/weights");
         await this.net?.save("file://out/interfaces/DQN/saves/weights");
         this.targetNet = await tf.loadLayersModel("file://out/interfaces/DQN/saves/weights/model.json");
         fs_1.default.rmdirSync("out/interfaces/DQN/saves/weights", { recursive: true });

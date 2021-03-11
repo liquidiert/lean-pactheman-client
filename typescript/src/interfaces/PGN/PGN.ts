@@ -1,6 +1,6 @@
 import { PlayerInfo } from "../../classes/player";
 import IMove, { MoveResult } from "../../iMove";
-import * as tf from "@tensorflow/tfjs-node-gpu";
+import * as tf from "@tensorflow/tfjs-node";
 import fs from "fs";
 import model from "../PGN/model";
 import GameState from "../../classes/gameState";
@@ -16,7 +16,7 @@ export default class PGN extends IMove {
     GAMMA = 0.95;
     LEARNING_RATE = 0.001;
     ENTROPY_BETA = 0.01;
-    BATCH_SIZE = 100;
+    BATCH_SIZE = 200;
     EPSILON_START = 1.0;
     EPSILON_FINAL = 0.6;
     EPSILON_DECAY = 1e4;
@@ -86,23 +86,29 @@ export default class PGN extends IMove {
 
         if (this.batchStates.length < this.BATCH_SIZE) return;
 
-        this.optimizer.minimize(() => {
-            let logits = this.net?.predict(tf.tensor2d(this.batchStates.map(s => s.tensorlike), [this.BATCH_SIZE, 10])) as tf.Tensor;
-            let logProb = tf.logSoftmax(logits, 1);
-            let probValues = logProb.gather(tf.tensor1d(this.batchActions, "int32"), 1).slice([0, 0], [1, this.BATCH_SIZE]).reshape([this.BATCH_SIZE, 1]);
-            let logProbActions = tf.tensor2d(this.batchScales, [this.BATCH_SIZE, 1]).mul(probValues);
-            let lossPolicy = logProbActions.mean().neg();
+        console.log(`optimize! ${new Date().toLocaleString()}`);
 
-            let prob = tf.softmax(logits, 1);
-            let entropy = (prob.mul(logProb)).sum(1).mean().neg();
-            let entropyLoss = entropy.mul(-this.ENTROPY_BETA);
-            
-            return lossPolicy.add(entropyLoss);
-        });
+        this.optimizer.minimize(() => 
+            tf.tidy(() => {
+                let logits = this.net?.predict(tf.tensor2d(this.batchStates.map(s => s.tensorlike), [this.BATCH_SIZE, 10])) as tf.Tensor;
+                let logProb = tf.logSoftmax(logits, 1);
+                let probValues = logProb.gather(tf.tensor1d(this.batchActions, "int32"), 1).slice([0, 0], [1, this.BATCH_SIZE]).reshape([this.BATCH_SIZE, 1]);
+                let logProbActions = tf.tensor2d(this.batchScales, [this.BATCH_SIZE, 1]).mul(probValues);
+                let lossPolicy = logProbActions.mean().neg();
+
+                let prob = tf.softmax(logits, 1);
+                let entropy = (prob.mul(logProb)).sum(1).mean().neg();
+                let entropyLoss = entropy.mul(-this.ENTROPY_BETA);
+
+                return lossPolicy.add(entropyLoss);
+            })
+        );
 
         this.batchStates.length = 0;
         this.batchActions.length = 0;
         this.batchScales.length = 0;
+
+        console.log("cleared buffers")
     }
 
     async saveModel() {

@@ -5,7 +5,7 @@ import args from "./options";
 import readline from "readline";
 import GameState from "./classes/gameState";
 import { MovingState } from "./models/pactheman.models";
-import * as tf from "@tensorflow/tfjs-node-gpu";
+import * as tf from "@tensorflow/tfjs-node";
 import model from "./interfaces/DQN/model";
 
 export class Constants {

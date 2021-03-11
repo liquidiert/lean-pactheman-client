@@ -1,7 +1,7 @@
 import GameState from "../../classes/gameState";
 import { IPosition } from "../../models/pactheman.models";
 import PositionExtended from "../../utils/extensions/positionExtensions";
-import { tensor } from "@tensorflow/tfjs-node-gpu";
+import { tensor } from "@tensorflow/tfjs-node";
 
 export default class InputVector {
     selfPosition_x: number;
