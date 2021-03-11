@@ -19,7 +19,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const tf = __importStar(require("@tensorflow/tfjs-node-gpu"));
+const tf = __importStar(require("@tensorflow/tfjs-node"));
 const model = tf.sequential({
     layers: [
         tf.layers.dense({ inputShape: [10], units: 357, activation: "relu" }),

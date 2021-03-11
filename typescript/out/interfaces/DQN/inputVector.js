@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const gameState_1 = __importDefault(require("../../classes/gameState"));
 const positionExtensions_1 = __importDefault(require("../../utils/extensions/positionExtensions"));
-const tfjs_node_gpu_1 = require("@tensorflow/tfjs-node-gpu");
+const tfjs_node_1 = require("@tensorflow/tfjs-node");
 class InputVector {
     constructor() {
         let selfDownscaled = positionExtensions_1.default.fromPosition(gameState_1.default.Instance.playerState.playerPositions.get(gameState_1.default.Instance.session.clientId ?? "")
@@ -26,7 +26,7 @@ class InputVector {
         this.clydePosition_y = clyde.y;
     }
     get asTensor() {
-        return tfjs_node_gpu_1.tensor([this.selfPosition_x, this.selfPosition_y, this.blinkyPosition_x, this.blinkyPosition_y,
+        return tfjs_node_1.tensor([this.selfPosition_x, this.selfPosition_y, this.blinkyPosition_x, this.blinkyPosition_y,
             this.inkyPosition_x, this.inkyPosition_y, this.pinkyPosition_x, this.pinkyPosition_y,
             this.clydePosition_x, this.clydePosition_y], [1, 10]);
     }

@@ -62,6 +62,7 @@ class Player {
         this._socket = new ws_1.default(`ws://${address}:${port}`);
         this._socket.on("message", (incomingData) => this.listen(incomingData, this));
         this._socket.on("close", (_, reason) => { console.log(`websocket was closed due to: ${reason}`); });
+        this._connected = true;
         return new Promise(resolve => this._socket?.on("open", resolve));
     }
     disconnect() {

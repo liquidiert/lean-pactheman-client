@@ -71,6 +71,7 @@ export default class Player {
         this._socket.on("message", (incomingData: Buffer) => this.listen(incomingData, this));
         this._socket.on("close", (_:number, reason: string) => { console.log(`websocket was closed due to: ${reason}`); });
 
+        this._connected = true;
         return new Promise(resolve => this._socket?.on("open", resolve));
     }
 
