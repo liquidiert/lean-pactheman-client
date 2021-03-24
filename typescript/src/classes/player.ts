@@ -23,7 +23,10 @@ export class PlayerInfo {
     }
 
     constructor(part: Partial<PlayerInfo> = {}) {
-        Object.assign(this, part);
+        this.session = part?.session ?? {};
+        this.movementSpeed = part?.movementSpeed ?? 0;
+        this.startPosition = part?.startPosition ?? new PositionExtended(0, 0);
+        this.position = part?.position ?? new PositionExtended(0, 0);
     }
 }
 
@@ -33,7 +36,7 @@ export default class Player {
     private _connected: boolean = false;
     name: string;
 
-    movementSpeed: number = 1350.0; // 350
+    movementSpeed: number = 350.0; // 1350
     startPosition: PositionExtended | null = null;
 
     get position(): PositionExtended {
@@ -67,7 +70,7 @@ export default class Player {
     async connect(address: string, port: number) {
         if (this._connected) return;
         this._socket = new WebSocket(`ws://${address}:${port}`);
-
+	
         this._socket.on("message", (incomingData: Buffer) => this.listen(incomingData, this));
         this._socket.on("close", (_:number, reason: string) => { console.log(`websocket was closed due to: ${reason}`); });
 

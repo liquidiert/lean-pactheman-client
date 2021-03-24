@@ -6,10 +6,10 @@ import DQN from "./interfaces/DQN/DQN";
 import PGN from "./interfaces/PGN/PGN";
 
 export default class MoveAdapter {
-    moveInstructor: IMove = {performMove: (info: PlayerInfo) => { return { sendMove: false, updateVelocity: Velocity.Zero };}, performMoveAsync: (info: PlayerInfo) => {}};
+    moveInstructor: IMove;
 
     constructor() {
-        this.moveInstructor = new PGN();
+        this.moveInstructor = new DQN();
     }
 
     getMove(info: PlayerInfo): MoveResult {

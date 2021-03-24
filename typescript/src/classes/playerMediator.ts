@@ -3,7 +3,7 @@ import Player from "./player";
 import Velocity from "./velocity";
 
 export default class PlayerMediator {
-    static _playerInstance: Player;
+    private static _playerInstance: Player;
 
     static setPlayer(p: Player) {
         PlayerMediator._playerInstance = p;

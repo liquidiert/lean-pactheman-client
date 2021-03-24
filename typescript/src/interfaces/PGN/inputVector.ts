@@ -1,11 +1,16 @@
 import GameState from "../../classes/gameState";
 import { IPosition } from "../../models/pactheman.models";
 import PositionExtended from "../../utils/extensions/positionExtensions";
-import { tensor } from "@tensorflow/tfjs-node-gpu";
+import { zeros, tensor4d } from "@tensorflow/tfjs-node-gpu";
+import { cloneDeep } from "lodash";
+import MapReader from "../../utils/mapReader";
 
 export default class InputVector {
     selfPosition_x: number;
     selfPosition_y: number;
+
+    oppPosition_x: number;
+    oppPosition_y: number;
 
     blinkyPosition_x: number;
     blinkyPosition_y: number;
@@ -19,16 +24,44 @@ export default class InputVector {
     clydePosition_x: number;
     clydePosition_y: number;
 
+    scorePointPositions: PositionExtended[];
+
     get asTensor() {
-        return tensor([this.selfPosition_x, this.selfPosition_y, this.blinkyPosition_x, this.blinkyPosition_y,
-        this.inkyPosition_x, this.inkyPosition_y, this.pinkyPosition_x, this.pinkyPosition_y,
-        this.clydePosition_x, this.clydePosition_y], [1, 10]);
+        let map = cloneDeep(MapReader.Instance.convolutionMap);
+        try {
+            for (let point of this.scorePointPositions) {
+                let pos = point.downscaled();
+                map[pos.y][pos.x][0] = 2;
+            }
+            map[this.selfPosition_y][this.selfPosition_x][0] = 3;
+            map[this.oppPosition_y][this.oppPosition_x][0] = 4;
+            map[this.blinkyPosition_y][this.blinkyPosition_x][0] = 5;
+            map[this.inkyPosition_y][this.inkyPosition_x][0] = 5;
+            map[this.pinkyPosition_y][this.pinkyPosition_x][0] = 5;
+            map[this.clydePosition_y][this.clydePosition_x][0] = 5;
+        } catch {
+            return zeros([1, 22, 19, 1]);
+        }
+        return tensor4d([map], [1, 22, 19, 1], "int32");
     }
 
     get tensorlike() {
-        return [this.selfPosition_x, this.selfPosition_y, this.blinkyPosition_x, this.blinkyPosition_y,
-        this.inkyPosition_x, this.inkyPosition_y, this.pinkyPosition_x, this.pinkyPosition_y,
-        this.clydePosition_x, this.clydePosition_y];
+        let map = cloneDeep(MapReader.Instance.convolutionMap);
+        try {
+            for (let point of this.scorePointPositions) {
+                let pos = point.downscaled();
+                map[pos.y][pos.x][0] = 2;
+            }
+            map[this.selfPosition_y][this.selfPosition_x][0] = 3;
+            map[this.oppPosition_y][this.oppPosition_x][0] = 4;
+            map[this.blinkyPosition_y][this.blinkyPosition_x][0] = 5;
+            map[this.inkyPosition_y][this.inkyPosition_x][0] = 5;
+            map[this.pinkyPosition_y][this.pinkyPosition_x][0] = 5;
+            map[this.clydePosition_y][this.clydePosition_x][0] = 5;
+        } catch {
+            // swallow
+        }
+        return map;
     }
 
     get shape() {
@@ -41,6 +74,13 @@ export default class InputVector {
             ?? { x: 0, y: 0 }).downscaled();
         this.selfPosition_x = selfDownscaled.x;
         this.selfPosition_y = selfDownscaled.y;
+
+        let oppDownscaled = PositionExtended.fromPosition(
+            GameState.Instance.playerState.playerPositions.get(
+                Array.from(GameState.Instance.playerState.playerPositions.keys()).find(k => k !== GameState.Instance.session.clientId ?? "") ?? "")
+            ?? { x: 0, y: 0 }).downscaled();
+        this.oppPosition_x = oppDownscaled.x;
+        this.oppPosition_y = oppDownscaled.y;
 
         let blinky = PositionExtended.fromPosition(GameState.Instance.ghostPositions.get("blinky") ?? { x: 0, y: 0 }).downscaled();
         this.blinkyPosition_x = blinky.x;
@@ -57,6 +97,8 @@ export default class InputVector {
         let clyde = PositionExtended.fromPosition(GameState.Instance.ghostPositions.get("blinky") ?? { x: 0, y: 0 }).downscaled();
         this.clydePosition_x = clyde.x;
         this.clydePosition_y = clyde.y;
+
+        this.scorePointPositions = cloneDeep(GameState.Instance.scorePointPositions.map(p => PositionExtended.fromPosition(p)));
     }
 
     static fromStateUpdate(selfPos: IPosition, ghostPositions: Map<string, IPosition>) {

@@ -25,9 +25,13 @@ namespace lean_pactheman_client {
 
         public override bool Run() {
             var updatePos = BehaviorTreeAI.Info.Position.Copy().AddOther(velocityToApply.Copy().Multiply(64).ToPosition()).Downscaled();
-            if (MapReader.Instance.IsValidPosition(updatePos)) {
-                BehaviorTreeAI.ResultVelocity = velocityToApply;
-                return true;
+            try {
+                if (MapReader.Instance.IsValidPosition(updatePos)) {
+                    BehaviorTreeAI.ResultVelocity = velocityToApply;
+                    return true;
+                }
+            } catch {
+                // wanted pos out of bounds -> swallow
             }
             return false;
         }
@@ -109,6 +113,7 @@ namespace lean_pactheman_client {
             var possibleTargets = GameState.Instance.ScorePointState.ScorePointPositions
                 .Select(sp => new DistanceWrapper(selfPos.ManhattanDistance(sp.Copy().Add(32)), sp)).ToList();
             possibleTargets.Sort((dist1, dist2) => (int)(dist1.Distance - dist2.Distance));
+            if (possibleTargets.Count == 0) return false;
             var targets = AStar.GetPath(
                 selfPos.Copy().Downscaled(),
                 possibleTargets[0].Pos.Downscaled(),

@@ -77,7 +77,7 @@ namespace lean_pactheman_client {
             var ghostTooClose = GameState.Instance.GhostPositions
                 .FirstOrDefault(pair => pair.Value.ManhattanDistance(playerInfo.Position) < 192).Value;
             if (ghostTooClose != null) {
-                if (targetMemory.Count > 0) targetMemory.Clear();
+                if (targetMemory?.Count > 0) targetMemory.Clear();
 
                 if (fleeMemory.Count == 0) {
 

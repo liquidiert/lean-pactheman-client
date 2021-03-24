@@ -8,8 +8,8 @@ namespace lean_pactheman_client {
     /// </summary>
     public interface IMove : IDisposable {
         /// <summary>
-        /// A default implementation for ai interfaces that only use PerformMoveAsync.
-        /// Other interfaces have to override this method.
+        /// A default implementation for ai interfaces that only uses PerformMoveAsync.
+        /// Concrete implementations that don't require immediate feedback have to override this method.
         /// </summary>
         /// <param name="info">A <c>PlayerInfo</c> object containing the current state of the player.</param>
         /// <returns>
@@ -23,7 +23,7 @@ namespace lean_pactheman_client {
         }
 # pragma warning disable 1998
         /// <summary>
-        /// The asynchronous version of PerformMove. <br/>
+        /// Asynchronous version of PerformMove. <br/>
         /// Meant to be used if the ai interface requires immediate PlayerState updates.
         /// </summary>
         /// <param name="info">A <c>PlayerInfo</c> object containing the current state of the player.</param>

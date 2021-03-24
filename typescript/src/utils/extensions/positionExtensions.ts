@@ -50,6 +50,10 @@ export default class PositionExtended implements IPosition {
         return new PositionExtended((this.x + other.x) / 2, (this.y + other.y) / 2);
     }
 
+    manhattanDistance(other: PositionExtended): number {
+        return Math.abs(this.x - other.x) + Math.abs(this.y - other.y);
+    }
+
     addOther(other: PositionExtended): PositionExtended {
         this.x += other.x;
         this.y += other.y;

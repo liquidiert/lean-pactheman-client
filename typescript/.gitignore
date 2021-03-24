@@ -119,3 +119,6 @@ dist
 # End of https://www.toptal.com/developers/gitignore/api/node
 emergency_saves/
 emergency_saves/**
+
+out/
+out/**

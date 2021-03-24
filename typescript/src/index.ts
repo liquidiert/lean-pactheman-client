@@ -5,8 +5,8 @@ import args from "./options";
 import readline from "readline";
 import GameState from "./classes/gameState";
 import { MovingState } from "./models/pactheman.models";
-import * as tf from "@tensorflow/tfjs-node";
-import model from "./interfaces/DQN/model";
+import * as tf from "@tensorflow/tfjs-node-gpu";
+import model from "./interfaces/PGN/model";
 
 export class Constants {
     static FRAME_DELTA_APPROX: number = 0.0167;
@@ -39,7 +39,6 @@ class Program {
     static player: Player;
 
     static async main() {
-
         // init bebop handlers
         await BebopDispatcher.Instance.initialize();
 
